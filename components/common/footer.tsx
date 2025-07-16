@@ -20,7 +20,7 @@ const Footer = () => {
   const renderFooterContent = (): React.ReactNode => (
     <>
       <h1 className="text-3xl font-medium text-center md:text-4xl">
-        Sweet, this is it from my side! Now it is your turn to say hi.
+        Sweet, that's it from my side! Now it's your turn to say hi.
       </h1>
       <div className="flex mt-8">{renderSocialIcons()}</div>
       <div className="flex mt-8">
