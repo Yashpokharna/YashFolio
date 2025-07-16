@@ -24,10 +24,10 @@ export const MENULINKS = [
 ];
 
 export const TYPED_STRINGS = [
+  "I design dynamic user experience.",
   "Clean code meets great design.",
   "Code that brings ideas alive.",
   "Design-driven development.",
-  "I design dynamic user experience.",
 ];
 
 export const EMAIL = "yashpokharna2002@gmail.com";
@@ -53,13 +53,13 @@ export interface IProject {
 
 export const PROJECTS: IProject[] = [
     {
-    name: "Personal 3D Folio",
-    image: "/projects/3DPersonalFolio.jpg",
+    name: "Resumify",
+    image: "/projects/Resumify.jpg",
     blurImage: "/projects/blur/figgen-blur.jpg",
-    description: "Designed 3D models for portfolio elements. 🚀",
-    gradient: ["#153BB9", "#0E2C8B"],
-    url: "https://yashpokharna.netlify.app/",
-    tech: ["tailwind", "react", "gsap", "figma", "npm"],
+    description: "Create Professional Resumes Online.📝",
+    gradient: ["#245B57", "#004741"],
+    url: "https://yash-resumify.netlify.app/",
+    tech: ["html", "react", "css", "npm"],
   },
   {
     name: "Track - IT",
@@ -70,6 +70,24 @@ export const PROJECTS: IProject[] = [
     url: "https://yashexpensetracker.netlify.app/",
     tech: ["html", "css", "tailwind"],
   },
+      {
+    name: "Personal 3D Folio",
+    image: "/projects/3DPersonalFolio.jpg",
+    blurImage: "/projects/blur/figgen-blur.jpg",
+    description: "Designed 3D models for portfolio elements. 🚀",
+    gradient: ["#153BB9", "#0E2C8B"],
+    url: "https://yashpokharna3d.netlify.app/",
+    tech: ["tailwind", "react", "gsap", "figma", "npm"],
+  },
+    {
+    name: "BrainWave",
+    image: "/projects/Brainwave.jpg",
+    blurImage: "/projects/blur/figgen-blur.jpg",
+    description: "Modern Landing Page Using Nextjs.🌍",
+    gradient: ["#3A0000", "#771E1E"],
+    url: "https://yash-brainwave.netlify.app/",
+    tech: ["npm", "angular", "typescript", "next"],
+  },
   {
     name: "Travel Guide",
     image: "/projects/travelguide.jpg",
@@ -78,33 +96,6 @@ export const PROJECTS: IProject[] = [
     gradient: ["#003052", "#167187"],
     url: "https://yashtravelguide.netlify.app/",
     tech: ["react", "next", "gsap", "tailwind"],
-  },
-  {
-    name: "Github Clone",
-    image: "/projects/GithubClone.jpg",
-    blurImage: "/projects/blur/figgen-blur.jpg",
-    description: "GitHub clone with repo management features.🌍",
-    gradient: ["#245B57", "#004741"],
-    url: "https://yashgithubclone.netlify.app/",
-    tech: ["html", "react", "css", "npm"],
-  },
-  {
-    name: "Review kar",
-    image: "/projects/CourseReview.jpg",
-    blurImage: "/projects/blur/figgen-blur.jpg",
-    description: "Course reviews and ratings made easy.📚",
-    gradient: ["#3A0000", "#771E1E"],
-    url: "https://github.com/Yashpokharna/CourseReview",
-    tech: ["npm", "angular", "typescript"],
-  },
-  {
-    name: "Hotel Guide",
-    image: "/projects/YashSocial.jpg",
-    blurImage: "/projects/blur/figgen-blur.jpg",
-    description: "Nodejs and NPM package management system.✈️",
-    gradient: ["#17007B", "#3A2C79"],
-    url: "https://github.com/Yashpokharna/Hotel-Guide",
-    tech: ["javascript", "sass", "svg", "gulp"],
   },
 ];
 
