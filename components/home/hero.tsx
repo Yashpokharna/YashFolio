@@ -1,10 +1,12 @@
-import { EMAIL, MENULINKS, SOCIAL_LINKS, TYPED_STRINGS } from "../../constants";
+"use client";
+
 import React, { MutableRefObject, useEffect, useRef } from "react";
 import Typed from "typed.js";
 import Image from "next/image";
 import { gsap, Linear } from "gsap";
 import Button, { ButtonTypes } from "../common/button";
 import HeroImage from "./hero-image";
+import { EMAIL, MENULINKS, SOCIAL_LINKS, TYPED_STRINGS } from "../../constants";
 
 const HERO_STYLES = {
   SECTION:
@@ -17,42 +19,44 @@ const HERO_STYLES = {
 };
 
 const HeroSection = React.memo(() => {
-  const typedSpanElement: MutableRefObject<HTMLSpanElement> = useRef(null);
-  const targetSection: MutableRefObject<HTMLDivElement> = useRef(null);
+  const typedSpanElement: MutableRefObject<HTMLSpanElement | null> = useRef(null);
+  const targetSection: MutableRefObject<HTMLDivElement | null> = useRef(null);
 
-  const initTypeAnimation = (
-    typedSpanElement: MutableRefObject<HTMLSpanElement>
-  ): Typed => {
-    return new Typed(typedSpanElement.current, {
+  // Typed.js initialization
+  const initTypeAnimation = () => {
+    return new Typed(typedSpanElement.current!, {
       strings: TYPED_STRINGS,
-      typeSpeed: 50,
-      backSpeed: 50,
+      typeSpeed: 40,
+      backSpeed: 30,
       backDelay: 1000,
       loop: true,
+      fadeOut: true,
     });
   };
 
-  const initRevealAnimation = (
-    targetSection: MutableRefObject<HTMLDivElement>
-  ): GSAPTimeline => {
-    const revealTl = gsap.timeline({ defaults: { ease: Linear.easeNone } });
-    revealTl
-      .to(targetSection.current, { opacity: 1, duration: 2 })
+  // GSAP intro reveal animation
+  const initRevealAnimation = () => {
+    if (!targetSection.current) return;
+
+    const tl = gsap.timeline({ defaults: { ease: Linear.easeNone } });
+    tl.to(targetSection.current, { opacity: 1, duration: 1.2 })
       .from(
         targetSection.current.querySelectorAll(".seq"),
-        { opacity: 0, duration: 0.5, stagger: 0.5 },
+        { opacity: 0, y: 20, duration: 0.5, stagger: 0.25 },
         "<"
       );
 
-    return revealTl;
+    return tl;
   };
 
   useEffect(() => {
-    const typed = initTypeAnimation(typedSpanElement);
-    initRevealAnimation(targetSection);
+    const typed = initTypeAnimation();
+    initRevealAnimation();
 
-    return typed.destroy;
-  }, [typedSpanElement, targetSection]);
+    return () => {
+      typed.destroy();
+    };
+  }, []);
 
   const renderBackgroundImage = (): React.ReactNode => (
     <div className={HERO_STYLES.BG_WRAPPER} style={{ maxHeight: "650px" }}>
@@ -88,12 +92,12 @@ const HeroSection = React.memo(() => {
           classes="mr-3"
           type={ButtonTypes.OUTLINE}
           name="Resume"
+          href="/Yash_Resume.pdf"
           otherProps={{
             target: "_blank",
             rel: "noreferrer",
           }}
-          href="/Yash_Resume.pdf"
-        ></Button>
+        />
         <Button
           classes="ml-3"
           type={ButtonTypes.PRIMARY}
@@ -103,7 +107,7 @@ const HeroSection = React.memo(() => {
             target: "_blank",
             rel: "noreferrer",
           }}
-        ></Button>
+        />
       </div>
     </div>
   );
