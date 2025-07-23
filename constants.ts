@@ -61,6 +61,15 @@ export const PROJECTS: IProject[] = [
     url: "https://yash-resumify.netlify.app/",
     tech: ["html", "react", "css", "npm"],
   },
+    {
+    name: "Twins Apparels",
+    image: "/projects/TwinsApparels.jpg",
+    blurImage: "/projects/blur/figgen-blur.jpg",
+    description: "Textile Manufactoring Factory Website.👔",
+    gradient: ["#003052", "#167187"],
+    url: "https://twinsapparels.netlify.app/",
+    tech: ["react", "next", "gsap", "tailwind"],
+  },
   {
     name: "Track - IT",
     image: "/projects/trackit.jpg",
@@ -70,7 +79,7 @@ export const PROJECTS: IProject[] = [
     url: "https://yashexpensetracker.netlify.app/",
     tech: ["html", "css", "tailwind"],
   },
-      {
+    {
     name: "Personal 3D Folio",
     image: "/projects/3DPersonalFolio.jpg",
     blurImage: "/projects/blur/figgen-blur.jpg",
@@ -87,15 +96,6 @@ export const PROJECTS: IProject[] = [
     gradient: ["#3A0000", "#771E1E"],
     url: "https://yash-brainwave.netlify.app/",
     tech: ["npm", "angular", "typescript", "next"],
-  },
-  {
-    name: "Travel Guide",
-    image: "/projects/travelguide.jpg",
-    blurImage: "/projects/blur/figgen-blur.jpg",
-    description: "A website to plan our vacation stays.🏡",
-    gradient: ["#003052", "#167187"],
-    url: "https://yashtravelguide.netlify.app/",
-    tech: ["react", "next", "gsap", "tailwind"],
   },
 ];
 
