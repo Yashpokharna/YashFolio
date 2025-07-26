@@ -58,7 +58,7 @@ export const PROJECTS: IProject[] = [
     blurImage: "/projects/blur/figgen-blur.jpg",
     description: "Create Professional Resumes Online.📝",
     gradient: ["#245B57", "#004741"],
-    url: "https://yash-resumify.netlify.app/",
+    url: "https://resumify.yashpokharna.in/",
     tech: ["html", "react", "css", "npm"],
   },
     {
@@ -67,7 +67,7 @@ export const PROJECTS: IProject[] = [
     blurImage: "/projects/blur/figgen-blur.jpg",
     description: "Textile Manufactoring Factory Website.👔",
     gradient: ["#003052", "#167187"],
-    url: "https://twinsapparels.netlify.app/",
+    url: "https://twinsapparels.in/",
     tech: ["react", "next", "gsap", "tailwind"],
   },
   {
@@ -76,7 +76,7 @@ export const PROJECTS: IProject[] = [
     blurImage: "/projects/blur/figgen-blur.jpg",
     description: "Visualizing expense data through charts and graphs.💸",
     gradient: ["#1F6582", "#1ABCFE"],
-    url: "https://yashexpensetracker.netlify.app/",
+    url: "https://trackit.yashpokharna.in/",
     tech: ["html", "css", "tailwind"],
   },
     {
@@ -85,7 +85,7 @@ export const PROJECTS: IProject[] = [
     blurImage: "/projects/blur/figgen-blur.jpg",
     description: "Designed 3D models for portfolio elements. 🚀",
     gradient: ["#153BB9", "#0E2C8B"],
-    url: "https://yashpokharna3d.netlify.app/",
+    url: "https://3dportfolio.yashpokharna.in/",
     tech: ["tailwind", "react", "gsap", "figma", "npm"],
   },
     {
@@ -94,7 +94,7 @@ export const PROJECTS: IProject[] = [
     blurImage: "/projects/blur/figgen-blur.jpg",
     description: "Modern Landing Page Using Nextjs.🌍",
     gradient: ["#3A0000", "#771E1E"],
-    url: "https://yash-brainwave.netlify.app/",
+    url: "https://brainwave.yashpokharna.in/",
     tech: ["npm", "angular", "typescript", "next"],
   },
 ];
