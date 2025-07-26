@@ -4,7 +4,7 @@ Welcome to **YashFolio**, my personal developer portfolio website built to showc
 
 ## 🌐 Live Demo
 
-🔗 [Visit Portfolio](https://yashbrainwave.netlify.app)
+🔗 [Visit Portfolio](https://yashpokharna.in/)
 
 ---
 
