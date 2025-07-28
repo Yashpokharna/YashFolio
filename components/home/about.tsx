@@ -2,6 +2,9 @@ import { gsap, Linear } from "gsap";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
+
 const AboutSection = () => {
   const quoteRef: MutableRefObject<HTMLDivElement> = useRef(null);
   const targetSection: MutableRefObject<HTMLDivElement> = useRef(null);
@@ -67,7 +70,7 @@ const AboutSection = () => {
   }, [quoteRef, targetSection]);
 
   const renderQuotes = (): React.ReactNode => (
-    <h1 ref={quoteRef} className="text-3xl font-medium text-3x sm:text-4xl md:text-6xl">
+    <h1 ref={quoteRef} className="text-3xl font-medium sm:text-4xl md:text-6xl">
       <span
         className={`about-1 leading-tight ${
           willChange ? "will-change-opacity" : ""

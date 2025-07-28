@@ -7,7 +7,7 @@ import { gsap } from "gsap";
 import Button, { ButtonTypes } from "../common/button";
 import HeroImage from "./hero-image";
 import { EMAIL, MENULINKS, SOCIAL_LINKS, TYPED_STRINGS } from "../../constants";
-import { useLoading } from "../../context/LoadingContext"; // ✅ import context
+import { useLoading } from "../../context/LoadingContext";
 
 const HERO_STYLES = {
   SECTION:
@@ -23,13 +23,16 @@ const HERO_STYLES = {
 const HeroSection = React.memo(() => {
   const typedSpanElement: MutableRefObject<HTMLSpanElement | null> = useRef(null);
   const targetSection: MutableRefObject<HTMLDivElement | null> = useRef(null);
-  const { isLoaded } = useLoading(); // ✅ use loading context
+  const typedInstanceRef = useRef<Typed | null>(null);
+  const { isLoaded } = useLoading();
 
   const initTypeAnimation = () => {
-    return new Typed(typedSpanElement.current!, {
+    if (!typedSpanElement.current || typedInstanceRef.current) return null;
+
+    const typed = new Typed(typedSpanElement.current, {
       strings: TYPED_STRINGS,
       typeSpeed: 60,
-      startDelay: 300,
+      startDelay: 0, // Reduced from 300ms to 0ms
       backSpeed: 40,
       backDelay: 1200,
       loop: true,
@@ -38,35 +41,67 @@ const HeroSection = React.memo(() => {
       cursorChar: "|",
       fadeOut: false,
     });
+
+    typedInstanceRef.current = typed;
+    return typed;
   };
 
   const initRevealAnimation = () => {
     if (!targetSection.current) return;
 
-    // ✅ Ensure browser is ready
-    requestAnimationFrame(() => {
-      gsap.set(targetSection.current, { opacity: 0 });
-      gsap.set(".seq", { opacity: 0, y: 20 });
+    // Use a more stable approach
+    const elements = targetSection.current.querySelectorAll(".seq");
+    if (elements.length === 0) return;
 
-      const tl = gsap.timeline();
-      tl.to(targetSection.current, { opacity: 1, duration: 0.3 })
-        .to(".seq", {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          ease: "power2.out",
-          stagger: 0.2,
-        });
+    const tl = gsap.timeline();
+    
+    // Set initial states more safely
+    gsap.set(targetSection.current, { opacity: 1 }); // Don't hide the whole section
+    gsap.set(elements, { opacity: 0, y: 20 });
+
+    // Animate elements in
+    tl.to(elements, {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      ease: "power2.out",
+      stagger: 0.2,
     });
   };
 
   useEffect(() => {
-    if (!isLoaded) {
-      const typed = initTypeAnimation();
-      initRevealAnimation();
-      return () => typed.destroy();
+    // Initialize immediately when component mounts
+    if (typeof window !== 'undefined' && typedSpanElement.current) {
+      try {
+        const typed = initTypeAnimation();
+        console.log('Typing animation started immediately');
+      } catch (error) {
+        console.error('Animation initialization error:', error);
+      }
     }
-  }, [isLoaded]); // ✅ only after loading completes
+
+    return () => {
+      if (typedInstanceRef.current) {
+        typedInstanceRef.current.destroy();
+        typedInstanceRef.current = null;
+      }
+    };
+  }, []); // Empty dependency array - runs once on mount
+
+  // Keep this for debugging
+  useEffect(() => {
+    console.log('Hero: isLoaded =', isLoaded);
+  }, [isLoaded]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (typedInstanceRef.current) {
+        typedInstanceRef.current.destroy();
+        typedInstanceRef.current = null;
+      }
+    };
+  }, []);
 
   const renderBackgroundImage = (): React.ReactNode => (
     <div className={HERO_STYLES.BG_WRAPPER} style={{ maxHeight: "650px" }}>
