@@ -49,24 +49,33 @@ const HeroSection = React.memo(() => {
   const initRevealAnimation = () => {
     if (!targetSection.current) return;
 
-    // Use a more stable approach
+    // Get all elements to animate
     const elements = targetSection.current.querySelectorAll(".seq");
+    const heroImage = targetSection.current.querySelector(".hero-bg");
+    
     if (elements.length === 0) return;
 
+    // Create timeline for entrance animations
     const tl = gsap.timeline();
     
-    // Set initial states more safely
-    gsap.set(targetSection.current, { opacity: 1 }); // Don't hide the whole section
-    gsap.set(elements, { opacity: 0, y: 20 });
-
-    // Animate elements in
+    // Animate elements from their hidden state to visible
     tl.to(elements, {
       opacity: 1,
       y: 0,
-      duration: 0.6,
+      duration: 0.8,
       ease: "power2.out",
-      stagger: 0.2,
+      stagger: 0.15, // Stagger each element by 0.15s
     });
+
+    // Animate hero image if it exists
+    if (heroImage) {
+      tl.to(heroImage, {
+        opacity: 1,
+        scale: 1,
+        duration: 1,
+        ease: "back.out(1.7)",
+      }, "-=0.5"); // Start 0.5s before the previous animation ends
+    }
   };
 
   useEffect(() => {
@@ -74,7 +83,13 @@ const HeroSection = React.memo(() => {
     if (typeof window !== 'undefined' && typedSpanElement.current) {
       try {
         const typed = initTypeAnimation();
-        console.log('Typing animation started immediately');
+        
+        // Add a small delay for GSAP animation to let typed animation start first
+        setTimeout(() => {
+          initRevealAnimation();
+        }, 200);
+        
+        console.log('Animations started successfully');
       } catch (error) {
         console.error('Animation initialization error:', error);
       }
@@ -104,7 +119,7 @@ const HeroSection = React.memo(() => {
   }, []);
 
   const renderBackgroundImage = (): React.ReactNode => (
-    <div className={HERO_STYLES.BG_WRAPPER} style={{ maxHeight: "650px" }}>
+    <div className={`${HERO_STYLES.BG_WRAPPER} hero-bg opacity-0 scale-75`} style={{ maxHeight: "650px" }}>
       <HeroImage />
     </div>
   );
@@ -125,14 +140,14 @@ const HeroSection = React.memo(() => {
   const renderHeroContent = (): React.ReactNode => (
     <div className={HERO_STYLES.CONTENT}>
       <div className="mb-2 md:mb-4">
-        <h2 className="text-4xl font-semibold seq">Hello 👋🏻</h2>
-        <h1 className="text-3xl font-semibold seq">I'm Yash Pokharna</h1>
+        <h2 className="text-4xl font-semibold seq opacity-0 translate-y-[30px]">Hello 👋🏻</h2>
+        <h1 className="text-3xl font-semibold seq opacity-0 translate-y-[30px]">I'm Yash Pokharna</h1>
       </div>
-      <p className="mb-4 min-h-[40px] sm:min-h-[48px] md:min-h-[56px]">
+      <p className="mb-4 min-h-[40px] sm:min-h-[48px] md:min-h-[56px] seq opacity-0 translate-y-[30px]">
         <span className={HERO_STYLES.TYPED_SPAN} ref={typedSpanElement}></span>
       </p>
-      <div className="flex mb-5 seq">{renderSocialLinks()}</div>
-      <div className="flex seq">
+      <div className="flex mb-5 seq opacity-0 translate-y-[30px]">{renderSocialLinks()}</div>
+      <div className="flex seq opacity-0 translate-y-[30px]">
         <Button
           classes="mr-3"
           type={ButtonTypes.OUTLINE}
