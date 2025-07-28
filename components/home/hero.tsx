@@ -23,7 +23,7 @@ const HERO_STYLES = {
 const HeroSection = React.memo(() => {
   const typedSpanElement: MutableRefObject<HTMLSpanElement | null> = useRef(null);
   const targetSection: MutableRefObject<HTMLDivElement | null> = useRef(null);
-  const { isLoading } = useLoading(); // ✅ use loading context
+  const { isLoaded } = useLoading(); // ✅ use loading context
 
   const initTypeAnimation = () => {
     return new Typed(typedSpanElement.current!, {
@@ -61,12 +61,12 @@ const HeroSection = React.memo(() => {
   };
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoaded) {
       const typed = initTypeAnimation();
       initRevealAnimation();
       return () => typed.destroy();
     }
-  }, [isLoading]); // ✅ only after loading completes
+  }, [isLoaded]); // ✅ only after loading completes
 
   const renderBackgroundImage = (): React.ReactNode => (
     <div className={HERO_STYLES.BG_WRAPPER} style={{ maxHeight: "650px" }}>
