@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { METADATA } from "../../constants";
+import { LoadingProvider } from "../../context/LoadingContext"; // ✅ Make sure this path is correct
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -17,16 +18,17 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <meta property="og:type" content="website" />
         <meta property="og:title" content={METADATA.title} />
         <meta property="og:description" content={METADATA.description} />
-        {/* <meta property="og:url" content={METADATA.siteUrl} /> */}
         <meta property="og:site_name" content={METADATA.title} />
-        <meta
-          property="og:image"/>
-        {/* <meta property="og:image:secure_url" content={METADATA.siteUrl} /> */}
+        <meta property="og:image" />
         <meta property="og:image:width" content="1440" />
         <meta property="og:image:height" content="800" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       </Head>
-      {children}
+
+      {/* ✅ Wrap content in LoadingProvider */}
+      <LoadingProvider>
+        {children}
+      </LoadingProvider>
     </>
   );
 };

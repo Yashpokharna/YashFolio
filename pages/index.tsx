@@ -15,9 +15,9 @@ import QuoteSection from "@/components/home/quote";
 import SkillsSection from "@/components/home/skills";
 import CollaborationSection from "@/components/home/collaboration";
 import Footer from "@/components/common/footer";
-// import TimelineSection from "@/components/home/timeline";
-import Scripts from "@/components/common/scripts";
 import AboutSection from "@/components/home/about";
+import LoadingScreen from "@/components/common/LoadingScreen"; // ✅ your loading screen
+import { useLoading } from "../context/LoadingContext"; // ✅ import hook
 
 const DEBOUNCE_TIME = 100;
 
@@ -34,6 +34,7 @@ export default function Home() {
   gsap.config({ nullTargetWarn: false });
 
   const [isDesktop, setisDesktop] = useState(true);
+  const { isLoaded } = useLoading(); // ✅ check if loading is done
 
   let timer: NodeJS.Timeout = null;
 
@@ -52,7 +53,6 @@ export default function Home() {
 
   useEffect(() => {
     debouncedDimensionCalculator();
-
     window.addEventListener("resize", debouncedDimensionCalculator);
     return () =>
       window.removeEventListener("resize", debouncedDimensionCalculator);
@@ -61,6 +61,8 @@ export default function Home() {
   const renderBackdrop = (): React.ReactNode => (
     <div className="fixed top-0 left-0 w-screen h-screen bg-gray-900 -z-1"></div>
   );
+
+  if (!isLoaded) return <LoadingScreen />; // ✅ block everything else
 
   return (
     <>
@@ -78,11 +80,9 @@ export default function Home() {
           <ProjectsSection isDesktop={isDesktop} />
           <QuoteSection />
           <SkillsSection />
-          {/* <TimelineSection isDesktop={isDesktop} /> */}
           <CollaborationSection />
           <Footer />
         </main>
-        {/* <Scripts /> */}
       </Layout>
     </>
   );

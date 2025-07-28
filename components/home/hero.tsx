@@ -3,10 +3,11 @@
 import React, { MutableRefObject, useEffect, useRef } from "react";
 import Typed from "typed.js";
 import Image from "next/image";
-import { gsap, Linear } from "gsap";
+import { gsap } from "gsap";
 import Button, { ButtonTypes } from "../common/button";
 import HeroImage from "./hero-image";
 import { EMAIL, MENULINKS, SOCIAL_LINKS, TYPED_STRINGS } from "../../constants";
+import { useLoading } from "../../context/LoadingContext"; // ✅ import context
 
 const HERO_STYLES = {
   SECTION:
@@ -22,8 +23,8 @@ const HERO_STYLES = {
 const HeroSection = React.memo(() => {
   const typedSpanElement: MutableRefObject<HTMLSpanElement | null> = useRef(null);
   const targetSection: MutableRefObject<HTMLDivElement | null> = useRef(null);
+  const { isLoading } = useLoading(); // ✅ use loading context
 
-  // Typed.js initialization
   const initTypeAnimation = () => {
     return new Typed(typedSpanElement.current!, {
       strings: TYPED_STRINGS,
@@ -39,29 +40,33 @@ const HeroSection = React.memo(() => {
     });
   };
 
-  // GSAP intro reveal animation
   const initRevealAnimation = () => {
     if (!targetSection.current) return;
 
-    const tl = gsap.timeline({ defaults: { ease: Linear.easeNone } });
-    tl.to(targetSection.current, { opacity: 1, duration: 1.2 })
-      .from(
-        targetSection.current.querySelectorAll(".seq"),
-        { opacity: 0, y: 20, duration: 0.5, stagger: 0.25 },
-        "<"
-      );
+    // ✅ Ensure browser is ready
+    requestAnimationFrame(() => {
+      gsap.set(targetSection.current, { opacity: 0 });
+      gsap.set(".seq", { opacity: 0, y: 20 });
 
-    return tl;
+      const tl = gsap.timeline();
+      tl.to(targetSection.current, { opacity: 1, duration: 0.3 })
+        .to(".seq", {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power2.out",
+          stagger: 0.2,
+        });
+    });
   };
 
   useEffect(() => {
-    const typed = initTypeAnimation();
-    initRevealAnimation();
-
-    return () => {
-      typed.destroy();
-    };
-  }, []);
+    if (!isLoading) {
+      const typed = initTypeAnimation();
+      initRevealAnimation();
+      return () => typed.destroy();
+    }
+  }, [isLoading]); // ✅ only after loading completes
 
   const renderBackgroundImage = (): React.ReactNode => (
     <div className={HERO_STYLES.BG_WRAPPER} style={{ maxHeight: "650px" }}>
@@ -85,8 +90,8 @@ const HeroSection = React.memo(() => {
   const renderHeroContent = (): React.ReactNode => (
     <div className={HERO_STYLES.CONTENT}>
       <div className="mb-2 md:mb-4">
-        <h2 className="text-4xl seq">Hello 👋🏻</h2>
-        <h1 className="text-3xl seq">I'm Yash Pokharna</h1>
+        <h2 className="text-4xl font-semibold seq">Hello 👋🏻</h2>
+        <h1 className="text-3xl font-semibold seq">I'm Yash Pokharna</h1>
       </div>
       <p className="mb-4 min-h-[40px] sm:min-h-[48px] md:min-h-[56px]">
         <span className={HERO_STYLES.TYPED_SPAN} ref={typedSpanElement}></span>
@@ -124,7 +129,6 @@ const HeroSection = React.memo(() => {
       className={HERO_STYLES.SECTION}
       id={heroSectionRef}
       ref={targetSection}
-      style={{ opacity: 0 }}
     >
       {renderHeroContent()}
       {renderBackgroundImage()}

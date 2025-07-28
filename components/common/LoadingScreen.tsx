@@ -11,26 +11,24 @@ const LoadingScreen: React.FC = () => {
 
   useEffect(() => {
     const greetingInterval = setInterval(() => {
-      setAnimate(false); // fade out
+      setAnimate(false);
       setTimeout(() => {
         if (current < greetings.length - 1) {
           setCurrent((prev) => prev + 1);
-          setAnimate(true); // fade in
+          setAnimate(true);
         } else {
           clearInterval(greetingInterval);
-          setTimeout(() => {
-            setIsSlidingUp(true); // trigger slide
-          }, 400); // wait a moment
+          setTimeout(() => setIsSlidingUp(true), 400);
         }
-      }, 100); // fade out delay
-    }, 400); // total duration per greeting
+      }, 100);
+    }, 400);
 
     return () => clearInterval(greetingInterval);
   }, [current]);
 
   useEffect(() => {
     if (isSlidingUp) {
-      const timer = setTimeout(() => setHide(true), 1000); // ⬅️ SMOOTH SLIDE DELAY
+      const timer = setTimeout(() => setHide(true), 1000);
       return () => clearTimeout(timer);
     }
   }, [isSlidingUp]);
