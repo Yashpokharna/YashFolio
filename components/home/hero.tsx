@@ -15,7 +15,8 @@ const HERO_STYLES = {
   SOCIAL_LINK: "link hover:opacity-80 duration-300 md:mr-4 mr-2",
   BG_WRAPPER:
     "absolute hero-bg right-0 md:bottom-0 bottom-8 -z-1 md:w-3/4 w-full scale-125 sm:scale-100 flex items-end",
-  TYPED_SPAN: "text-xl sm:text-2xl md:text-4xl seq",
+  TYPED_SPAN:
+    "text-xl sm:text-2xl md:text-4xl seq antialiased font-semibold tracking-wide",
 };
 
 const HeroSection = React.memo(() => {
@@ -26,11 +27,15 @@ const HeroSection = React.memo(() => {
   const initTypeAnimation = () => {
     return new Typed(typedSpanElement.current!, {
       strings: TYPED_STRINGS,
-      typeSpeed: 40,
-      backSpeed: 30,
-      backDelay: 1000,
+      typeSpeed: 60,
+      startDelay: 300,
+      backSpeed: 40,
+      backDelay: 1200,
       loop: true,
-      fadeOut: true,
+      smartBackspace: true,
+      showCursor: true,
+      cursorChar: "|",
+      fadeOut: false,
     });
   };
 
@@ -83,7 +88,7 @@ const HeroSection = React.memo(() => {
         <h2 className="text-4xl seq">Hello 👋🏻</h2>
         <h1 className="text-3xl seq">I'm Yash Pokharna</h1>
       </div>
-      <p className="mb-4">
+      <p className="mb-4 min-h-[40px] sm:min-h-[48px] md:min-h-[56px]">
         <span className={HERO_STYLES.TYPED_SPAN} ref={typedSpanElement}></span>
       </p>
       <div className="flex mb-5 seq">{renderSocialLinks()}</div>
@@ -102,7 +107,7 @@ const HeroSection = React.memo(() => {
           classes="ml-3"
           type={ButtonTypes.PRIMARY}
           name="Let's Talk"
-          href="mailto:yashpokharna2002@gmail.com"
+          href={`mailto:${EMAIL}`}
           otherProps={{
             target: "_blank",
             rel: "noreferrer",
