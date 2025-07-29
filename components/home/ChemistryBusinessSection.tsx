@@ -38,7 +38,7 @@ export default function ChemistryBusinessSection() {
           Sometimes you just need to see it
         </h2>
         <p className="mt-3 text-base sm:text-lg text-muted-foreground md:text-2xl">
-          ( On desktop: hover to see the magic ✨ · On mobile: tap to reveal ✨)
+          ( On Desktop: Hover to see the Magic ✨ · On Mobile: Tap to Reveal ✨)
         </p>
       </div>
 
