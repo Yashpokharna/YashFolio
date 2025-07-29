@@ -6,20 +6,28 @@ export default function ChemistryBusinessSection() {
   const [percentage, setPercentage] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
 
+  const updatePercentage = (x: number, bounds: DOMRect) => {
+    const newPercentage = (x / bounds.width) * 100;
+    setPercentage(newPercentage);
+  };
+
   const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const bounds = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - bounds.left;
-    const newPercentage = (x / bounds.width) * 100;
-    setPercentage(newPercentage);
+    updatePercentage(x, bounds);
+  };
+
+  const handleTouch = (e: React.TouchEvent<HTMLDivElement>) => {
+    const bounds = e.currentTarget.getBoundingClientRect();
+    const touch = e.touches[0];
+    const x = touch.clientX - bounds.left;
+    updatePercentage(x, bounds);
+    setIsHovering(true);
   };
 
   const handleLeave = () => {
     setIsHovering(false);
     setPercentage(0);
-  };
-
-  const handleEnter = () => {
-    setIsHovering(true);
   };
 
   return (
@@ -30,7 +38,7 @@ export default function ChemistryBusinessSection() {
           Sometimes you just need to see it
         </h2>
         <p className="mt-3 text-base sm:text-lg text-muted-foreground md:text-2xl">
-          ( Hover to see the magic ✨)
+          ( On desktop: hover to see the magic ✨ · On mobile: tap to reveal ✨)
         </p>
       </div>
 
@@ -38,8 +46,11 @@ export default function ChemistryBusinessSection() {
       <div
         className="relative mx-auto max-w-[90%] sm:max-w-4xl lg:max-w-5xl rounded-2xl bg-muted/5 px-6 sm:px-10 py-16 sm:py-20 shadow-xl overflow-hidden border border-white flex items-center justify-center h-[220px] sm:h-[260px] md:h-[280px] lg:h-[300px]"
         onMouseMove={handleMove}
-        onMouseEnter={handleEnter}
+        onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={handleLeave}
+        onTouchStart={handleTouch}
+        onTouchMove={handleTouch}
+        onTouchEnd={handleLeave}
       >
         {/* Default Line */}
         <p
