@@ -18,6 +18,8 @@ import Footer from "@/components/common/footer";
 import AboutSection from "@/components/home/about";
 import LoadingScreen from "@/components/common/LoadingScreen";
 import { useLoading } from "../context/LoadingContext";
+import Chemistry from "@/components/home/ChemistryBusinessSection";
+import ChemistryBusinessSection from "@/components/home/ChemistryBusinessSection";
 
 const DEBOUNCE_TIME = 100;
 
@@ -82,6 +84,7 @@ export default function Home() {
           <ProjectsSection isDesktop={isDesktop} />
           <QuoteSection />
           <SkillsSection />
+          <ChemistryBusinessSection />
           <CollaborationSection />
           <Footer />
         </main>
