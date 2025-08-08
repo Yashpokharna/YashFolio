@@ -10,7 +10,7 @@ export default function ChemistryBusinessSection() {
     const newPercentage = (x / bounds.width) * 100;
     setPercentage(newPercentage);
   };
-
+  
   const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const bounds = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - bounds.left;
@@ -50,7 +50,7 @@ export default function ChemistryBusinessSection() {
         onMouseLeave={handleLeave}
         onTouchStart={handleTouch}
         onTouchMove={handleTouch}
-        onTouchEnd={handleLeave}
+        onTouchEnd={handleLeave}  
       >
         {/* Default Line */}
         <p
