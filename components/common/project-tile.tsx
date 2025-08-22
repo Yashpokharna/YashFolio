@@ -20,7 +20,7 @@ const ProjectTile = ({
     description,
     gradient: [stop1, stop2],
   } = project;
-
+    
   useEffect(() => {
     VanillaTilt.init(projectCard.current, {
       max: 5,

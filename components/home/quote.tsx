@@ -19,6 +19,8 @@ const QuoteSection = () => {
         backgroundPositionX: "100%",
         duration: 1,
       });
+      
+
 
     return ScrollTrigger.create({
       trigger: targetSection.current,

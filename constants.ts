@@ -24,10 +24,10 @@ export const MENULINKS = [
 ];
 
 export const TYPED_STRINGS = [
-  "I design dynamic user experience.",
-  "Clean code meets great design.",
-  "Code that brings ideas alive.",
-  "Design-driven development.",
+  "I Design Dynamic User Experience.",
+  "Clean Code Meets Great Design.",
+  "Code That Brings Ideas Alive.",
+  "Design-Driven Development.",
 ];
 
 export const EMAIL = "yashpokharna2002@gmail.com";

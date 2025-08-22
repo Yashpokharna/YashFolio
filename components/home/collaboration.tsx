@@ -36,7 +36,7 @@ const CollaborationSection = () => {
       onToggle: (self) => setwillChange(self.isActive),
     });
   };
-
+  
   const initSlidingTextAnimation = (
     targetSection: MutableRefObject<HTMLDivElement>
   ) => {

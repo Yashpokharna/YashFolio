@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 
 export default function ChemistryBusinessSection() {
@@ -16,7 +15,9 @@ export default function ChemistryBusinessSection() {
     const x = e.clientX - bounds.left;
     updatePercentage(x, bounds);
   };
-
+  
+  
+  
   const handleTouch = (e: React.TouchEvent<HTMLDivElement>) => {
     const bounds = e.currentTarget.getBoundingClientRect();
     const touch = e.touches[0];
