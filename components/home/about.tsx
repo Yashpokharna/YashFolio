@@ -2,8 +2,10 @@ import { gsap, Linear } from "gsap";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 
+
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
+
 
 const AboutSection = () => {
   const quoteRef: MutableRefObject<HTMLDivElement> = useRef(null);

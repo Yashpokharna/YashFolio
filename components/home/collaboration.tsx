@@ -36,7 +36,7 @@ const CollaborationSection = () => {
       onToggle: (self) => setwillChange(self.isActive),
     });
   };
-  
+
   const initSlidingTextAnimation = (
     targetSection: MutableRefObject<HTMLDivElement>
   ) => {
@@ -88,9 +88,8 @@ const CollaborationSection = () => {
   const renderTitle = () => (
     <h1
       ref={quoteRef}
-      className={`${COLLABORATION_STYLE.TITLE} ${
-        willChange ? "will-change-opacity" : ""
-      }`}
+      className={`${COLLABORATION_STYLE.TITLE} ${willChange ? "will-change-opacity" : ""
+        }`}
     >
       Interested in <span className="font-bold text-strong">Collaboration</span>
       ?

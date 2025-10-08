@@ -32,7 +32,7 @@ const HeroSection = React.memo(() => {
     const typed = new Typed(typedSpanElement.current, {
       strings: TYPED_STRINGS,
       typeSpeed: 60,
-      startDelay: 0, // Reduced from 300ms to 0ms
+      startDelay: 0, 
       backSpeed: 40,
       backDelay: 1200,
       loop: true,
@@ -49,16 +49,13 @@ const HeroSection = React.memo(() => {
   const initRevealAnimation = () => {
     if (!targetSection.current) return;
 
-    // Get all elements to animate
     const elements = targetSection.current.querySelectorAll(".seq");
     const heroImage = targetSection.current.querySelector(".hero-bg");
     
     if (elements.length === 0) return;
 
-    // Create timeline for entrance animations
     const tl = gsap.timeline();
     
-    // Animate elements from their hidden state to visible
     tl.to(elements, {
       opacity: 1,
       y: 0,
@@ -67,7 +64,6 @@ const HeroSection = React.memo(() => {
       stagger: 0.15, // Stagger each element by 0.15s
     });
 
-    // Animate hero image if it exists
     if (heroImage) {
       tl.to(heroImage, {
         opacity: 1,
