@@ -1,10 +1,8 @@
 import { METADATA } from "../constants";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
-
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
-
 import Layout from "@/components/common/layout";
 import Header from "@/components/common/header";
 import ProgressIndicator from "@/components/common/progress-indicator";
@@ -84,7 +82,7 @@ export default function Home() {
           <ProjectsSection isDesktop={isDesktop} />
           <QuoteSection />
           <SkillsSection />
-          {/* <ChemistryBusinessSection /> */}
+          <ChemistryBusinessSection />
           <CollaborationSection />
           <Footer />
         </main>

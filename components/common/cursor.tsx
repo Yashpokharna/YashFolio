@@ -52,9 +52,7 @@ const Cursor = ({ isDesktop }: IDesktop) => {
   const initCursorAnimation = () => {
     follower.current.classList.remove("hidden");
     cursor.current.classList.remove("hidden");
-
     document.addEventListener("mousemove", moveCircle);
-
     document.querySelectorAll(".link").forEach((el) => {
       el.addEventListener("mouseenter", onHover);
       el.addEventListener("mouseleave", onUnhover);
