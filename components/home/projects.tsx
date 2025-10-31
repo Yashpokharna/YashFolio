@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { ExternalLink, Sparkles } from 'lucide-react';
 import { PROJECTS } from '../../constants';
 
-const ProjectsSection = () => {
+// Accept the prop here 👇
+interface ProjectsSectionProps {
+  isDesktop: boolean;
+}
+
+const ProjectsSection: React.FC<ProjectsSectionProps> = ({ isDesktop }) => {
   const [activeProject, setActiveProject] = useState(0);
 
   const techIcons: Record<string, string> = {
@@ -15,11 +20,15 @@ const ProjectsSection = () => {
     npm: "📦",
     angular: "🅰️",
     typescript: "📘",
-    figma: "🎨"
+    figma: "🎨",
   };
 
   return (
-    <section className="relative min-h-screen py-20 overflow-hidden bg-slate-950">
+    <section
+      className={`relative min-h-screen py-20 overflow-hidden bg-slate-950 ${
+        isDesktop ? '' : 'px-4'
+      }`}
+    >
       {/* Subtle background */}
       <div
         className="absolute inset-0 opacity-20"

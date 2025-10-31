@@ -16,7 +16,6 @@ import Footer from "@/components/common/footer";
 import AboutSection from "@/components/home/about";
 import LoadingScreen from "@/components/common/LoadingScreen";
 import { useLoading } from "../context/LoadingContext";
-import Chemistry from "@/components/home/ChemistryBusinessSection";
 import ChemistryBusinessSection from "@/components/home/ChemistryBusinessSection";
 
 const DEBOUNCE_TIME = 100;
@@ -25,18 +24,19 @@ export const isSmallScreen = (): boolean => document.body.clientWidth < 767;
 export const NO_MOTION_PREFERENCE_QUERY =
   "(prefers-reduced-motion: no-preference)";
 
-export interface IDesktop {
+// ✅ optional shared interface for components that accept isDesktop
+export interface IDesktopProps {
   isDesktop: boolean;
 }
 
 export default function Home() {
-  const [isDesktop, setisDesktop] = useState(true);
+  const [isDesktop, setIsDesktop] = useState(true);
   const { isLoaded } = useLoading();
 
-  let timer: NodeJS.Timeout = null;
+  let timer: NodeJS.Timeout | null = null;
 
   const debouncedDimensionCalculator = () => {
-    clearTimeout(timer);
+    if (timer) clearTimeout(timer);
     timer = setTimeout(() => {
       const isDesktopResult =
         typeof window.orientation === "undefined" &&
@@ -44,7 +44,7 @@ export default function Home() {
 
       window.history.scrollRestoration = "manual";
 
-      setisDesktop(isDesktopResult);
+      setIsDesktop(isDesktopResult);
     }, DEBOUNCE_TIME);
   };
 
