@@ -17,41 +17,37 @@ const SkillsSection = () => {
       icon: Code2,
       skills: SKILLS.frontend,
       color: "from-purple-500 to-pink-500",
-      bgColor: "from-purple-500/10 to-pink-500/10",
     },
     {
       title: "UI/UX Design",
       icon: Palette,
       skills: SKILLS.userInterface,
       color: "from-blue-500 to-cyan-500",
-      bgColor: "from-blue-500/10 to-cyan-500/10",
     },
     {
       title: "Other Skills",
       icon: Layers,
       skills: SKILLS.other,
       color: "from-pink-500 to-orange-500",
-      bgColor: "from-pink-500/10 to-orange-500/10",
     },
   ];
 
   const initRevealAnimation = (
-    targetSection: MutableRefObject<HTMLDivElement | null>
-  ): ScrollTrigger | void => {
-    if (!targetSection.current) return;
+    target: MutableRefObject<HTMLDivElement | null>
+  ): ScrollTrigger | null => {
+    if (!target.current) return null;
 
-    // Ensure visibility before animation starts
-    gsap.set(targetSection.current.querySelectorAll(".seq"), { opacity: 1 });
+    gsap.set(target.current.querySelectorAll(".seq"), { opacity: 1 });
 
     const revealTl = gsap.timeline({ defaults: { ease: Linear.easeNone } });
     revealTl.from(
-      targetSection.current.querySelectorAll(".seq"),
+      target.current.querySelectorAll(".seq"),
       { opacity: 0, duration: 0.6, stagger: 0.3, y: 30 },
       "<"
     );
 
     return ScrollTrigger.create({
-      trigger: targetSection.current.querySelector(".skills-wrapper"),
+      trigger: target.current.querySelector(".skills-wrapper"),
       start: "top 85%",
       end: "center center",
       animation: revealTl,
@@ -62,7 +58,9 @@ const SkillsSection = () => {
 
   useEffect(() => {
     const trigger = initRevealAnimation(targetSection);
-    return () => trigger?.kill();
+    return () => {
+      if (trigger) trigger.kill(); // ✅ Safely kills only if trigger exists
+    };
   }, []);
 
   return (
@@ -116,12 +114,11 @@ const SkillsSection = () => {
 
           {/* Skills Categories */}
           <div className="space-y-12">
-            {categories.map((category, categoryIndex) => {
+            {categories.map((category, i) => {
               const Icon = category.icon;
-
               return (
                 <div
-                  key={categoryIndex}
+                  key={i}
                   className={`seq transition-all duration-500 ${
                     willChange ? "will-change-opacity" : ""
                   }`}
@@ -145,7 +142,6 @@ const SkillsSection = () => {
                         key={skill}
                         className="relative flex flex-col items-center justify-center p-6 transition rounded-2xl bg-slate-900/40 backdrop-blur-sm hover:bg-slate-900/60"
                       >
-                        {/* Skill Icon */}
                         <div className="relative mb-4">
                           <Image
                             src={`/skills/${skill}.svg`}
@@ -155,8 +151,6 @@ const SkillsSection = () => {
                             className="object-contain"
                           />
                         </div>
-
-                        {/* Skill Name */}
                         <span className="text-sm font-semibold text-center text-slate-400">
                           {skill}
                         </span>
@@ -183,7 +177,6 @@ const SkillsSection = () => {
             opacity: 0.6;
           }
         }
-
         @keyframes float-horizontal {
           0%,
           100% {
@@ -195,11 +188,9 @@ const SkillsSection = () => {
             opacity: 0.6;
           }
         }
-
         .animate-float {
           animation: float 3s ease-in-out infinite;
         }
-
         .animate-float-horizontal {
           animation: float-horizontal 4s ease-in-out infinite;
         }
