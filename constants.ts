@@ -10,6 +10,10 @@ export const MENULINKS = [
     ref: "home",
   },
   {
+    name: "About",
+    ref: "about",
+  },
+  {
     name: "Works",
     ref: "works",
   },

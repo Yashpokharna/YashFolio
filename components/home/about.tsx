@@ -2,6 +2,8 @@ import { gsap, Linear } from "gsap";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { Sparkles, Code2, Palette, Zap } from "lucide-react";
+import { MENULINKS, SKILLS } from "../../constants";
+
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -110,7 +112,7 @@ const AboutSection = () => {
   return (
     <section
       className="relative w-full py-20 overflow-hidden select-none bg-slate-950"
-      ref={targetSection}
+      id={MENULINKS[2].ref} ref={targetSection}
     >
       {/* Subtle background */}
       <div className="absolute inset-0 opacity-20"
