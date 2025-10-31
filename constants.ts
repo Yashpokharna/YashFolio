@@ -58,6 +58,25 @@ export interface IProject {
 
 export const PROJECTS: IProject[] = [
     {
+    name: "Bolia & Co.",
+    image: "/projects/Bolia.jpg",
+    blurImage: "/projects/blur/figgen-blur.jpg",
+    description: "CA Firm Website.💵",
+    gradient: ["#003052", "#167187"],
+    url: "https://bolia.netlify.app/",
+    tech: ["npm", "angular", "typescript", "next"],
+  },
+      
+    {
+    name: "Twins Apparels",
+    image: "/projects/TwinsApparels.jpg",
+    blurImage: "/projects/blur/figgen-blur.jpg",
+    description: "Textile Manufactoring Factory Website.👔",
+    gradient: ["#3A0000", "#771E1E"],
+    url: "https://twinsapparels.in/",
+    tech: ["react", "next", "gsap", "tailwind"],
+  },
+    {
     name: "Resumify",
     image: "/projects/Resumify.jpg",
     blurImage: "/projects/blur/figgen-blur.jpg",
@@ -65,15 +84,6 @@ export const PROJECTS: IProject[] = [
     gradient: ["#245B57", "#004741"],
     url: "https://resumify.yashpokharna.in/",
     tech: ["html", "react", "css", "npm"],
-  },
-    {
-    name: "Twins Apparels",
-    image: "/projects/TwinsApparels.jpg",
-    blurImage: "/projects/blur/figgen-blur.jpg",
-    description: "Textile Manufactoring Factory Website.👔",
-    gradient: ["#003052", "#167187"],
-    url: "https://twinsapparels.in/",
-    tech: ["react", "next", "gsap", "tailwind"],
   },
   {
     name: "Track - IT",
@@ -92,15 +102,6 @@ export const PROJECTS: IProject[] = [
     gradient: ["#153BB9", "#0E2C8B"],
     url: "https://3dportfolio.yashpokharna.in/",
     tech: ["tailwind", "react", "gsap", "figma", "npm"],
-  },
-    {
-    name: "BrainWave",
-    image: "/projects/Brainwave.jpg",
-    blurImage: "/projects/blur/figgen-blur.jpg",
-    description: "Modern Landing Page Using Nextjs.🌍",
-    gradient: ["#3A0000", "#771E1E"],
-    url: "https://brainwave.yashpokharna.in/",
-    tech: ["npm", "angular", "typescript", "next"],
   },
 ];
 

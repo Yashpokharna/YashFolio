@@ -109,6 +109,7 @@ const CollaborationSection = () => {
         " Frontend Development  Motion Graphics ",
         "mt-6 md:mt-8 ui-right"
       )}
+      <div className="w-32 h-1 mx-auto mt-12 rounded-full bg-gradient-to-r from-purple-600 to-pink-500" />
     </section>
   );
 };
