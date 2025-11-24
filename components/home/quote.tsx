@@ -1,63 +1,248 @@
-import { gsap, Linear } from "gsap";
-import React, { MutableRefObject, useEffect, useRef, useState } from "react";
-import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-import { Quote, Sparkles } from "lucide-react";
+import React, { useRef, useState, useEffect } from "react";
+import { Quote, Sparkles, RefreshCw } from "lucide-react";
 
-const QuoteSection = () => {
-  const quoteRef: MutableRefObject<HTMLDivElement> = useRef(null);
-  const targetSection: MutableRefObject<HTMLDivElement> = useRef(null);
-
-  const [willChange, setwillChange] = useState(false);
-
-  const initQuoteAnimation = (
-    quoteRef: MutableRefObject<HTMLDivElement>,
-    targetSection: MutableRefObject<HTMLDivElement>
-  ): ScrollTrigger => {
-    const timeline = gsap.timeline({ defaults: { ease: Linear.easeNone } });
-    timeline
-      .from(quoteRef.current, { opacity: 0, duration: 2 })
-      .to(quoteRef.current.querySelector(".text-strong"), {
-        backgroundPositionX: "100%",
-        duration: 1,
-      });
-
-    return ScrollTrigger.create({
-      trigger: targetSection.current,
-      start: "center bottom",
-      end: "center center",
-      scrub: 0,
-      animation: timeline,
-      onToggle: (self) => setwillChange(self.isActive),
-    });
-  };
+const FallingText = ({
+  text = '',
+  highlightWords = [],
+  trigger = 'hover',
+  gravity = 0.8,
+  fontSize = '2rem'
+}) => {
+  const containerRef = useRef(null);
+  const textRef = useRef(null);
+  const [effectStarted, setEffectStarted] = useState(false);
+  const wordsDataRef = useRef([]);
+  const animationFrameRef = useRef(null);
+  const mouseRef = useRef({ x: 0, y: 0, pressed: false, draggedWord: null });
 
   useEffect(() => {
-    const quoteAnimationRef = initQuoteAnimation(quoteRef, targetSection);
+    if (!textRef.current) return;
+    const words = text.split(' ');
 
-    return quoteAnimationRef.kill;
-  }, [quoteRef, targetSection]);
+    const newHTML = words
+      .map((word, index) => {
+        const isHighlighted = highlightWords.some(hw =>
+          word.toLowerCase().includes(hw.toLowerCase())
+        );
+        return `<span
+          data-word-index="${index}"
+          class="inline-block mx-[2px] select-none ${
+            isHighlighted
+              ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 font-bold'
+              : 'text-white'
+          }"
+          style="transition: none;"
+        >
+          ${word}
+        </span>`;
+      })
+      .join(' ');
+
+    textRef.current.innerHTML = newHTML;
+  }, [text, highlightWords]);
+
+  useEffect(() => {
+    if (!effectStarted || !textRef.current || !containerRef.current) return;
+
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const wordSpans = textRef.current.querySelectorAll('span');
+
+    wordsDataRef.current = [...wordSpans].map((elem, index) => {
+      const rect = elem.getBoundingClientRect();
+      return {
+        elem,
+        x: rect.left - containerRect.left + rect.width / 2,
+        y: rect.top - containerRect.top + rect.height / 2,
+        vx: (Math.random() - 0.5) * 8,
+        vy: (Math.random() - 0.5) * 2,
+        rotation: 0,
+        rotationSpeed: (Math.random() - 0.5) * 0.1,
+        width: rect.width,
+        height: rect.height,
+        restitution: 0.6,
+        delay: index * 30,
+        isFrozen: false
+      };
+    });
+
+    wordsDataRef.current.forEach(({ elem }) => {
+      elem.style.position = 'absolute';
+      elem.style.transformOrigin = 'center center';
+    });
+
+    const handleMouseMove = (e) => {
+      const rect = containerRef.current.getBoundingClientRect();
+      mouseRef.current.x = e.clientX - rect.left;
+      mouseRef.current.y = e.clientY - rect.top;
+    };
+
+    const handleMouseDown = (e) => {
+      mouseRef.current.pressed = true;
+      const rect = containerRef.current.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+
+      for (let word of wordsDataRef.current) {
+        const dx = mx - word.x;
+        const dy = my - word.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < Math.max(word.width, word.height) / 2 + 20) {
+          mouseRef.current.draggedWord = word;
+          word.offsetX = dx;
+          word.offsetY = dy;
+          break;
+        }
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (mouseRef.current.draggedWord) {
+        mouseRef.current.draggedWord.vx += (Math.random() - 0.5) * 5;
+        mouseRef.current.draggedWord.vy -= 3;
+      }
+      mouseRef.current.pressed = false;
+      mouseRef.current.draggedWord = null;
+    };
+
+    containerRef.current.addEventListener('mousemove', handleMouseMove);
+    containerRef.current.addEventListener('mousedown', handleMouseDown);
+    containerRef.current.addEventListener('mouseup', handleMouseUp);
+    containerRef.current.addEventListener('mouseleave', handleMouseUp);
+
+    let startTime = Date.now();
+
+    const animate = () => {
+      const containerRect = containerRef.current?.getBoundingClientRect();
+      if (!containerRect) return;
+
+      const width = containerRect.width;
+      const height = containerRect.height;
+      const currentTime = Date.now() - startTime;
+
+      wordsDataRef.current.forEach(word => {
+        if (currentTime < word.delay) return;
+
+        if (word.isFrozen) {
+          word.elem.style.left = `${word.x}px`;
+          word.elem.style.top = `${word.y}px`;
+          word.elem.style.transform = `translate(-50%, -50%) rotate(${word.rotation}rad)`;
+          return;
+        }
+
+        if (mouseRef.current.draggedWord === word && mouseRef.current.pressed) {
+          word.x = mouseRef.current.x - (word.offsetX || 0);
+          word.y = mouseRef.current.y - (word.offsetY || 0);
+          word.vx = 0;
+          word.vy = 0;
+          word.rotationSpeed = (Math.random() - 0.5) * 0.2;
+        } else {
+          // Gravity
+          word.vy += gravity;
+          word.x += word.vx;
+          word.y += word.vy;
+          word.rotation += word.rotationSpeed;
+
+          word.vx *= 0.98;
+          word.vy *= 0.995;
+        }
+
+        // Floor (FREEZE)
+        if (word.y > height - word.height / 2 - 10) {
+          word.y = height - word.height / 2 - 10;
+
+          if (Math.abs(word.vy) < 1) {
+            word.vx = 0;
+            word.vy = 0;
+            word.rotationSpeed = 0;
+            word.isFrozen = true;
+          } else {
+            word.vy *= -word.restitution;
+            word.vx *= 0.8;
+            word.rotationSpeed *= 0.8;
+          }
+        }
+
+        // Walls
+        if (word.x > width - word.width / 2) {
+          word.x = width - word.width / 2;
+          word.vx *= -word.restitution;
+        }
+        if (word.x < word.width / 2) {
+          word.x = word.width / 2;
+          word.vx *= -word.restitution;
+        }
+
+        // Prevent overlap with frozen words
+        wordsDataRef.current.forEach(other => {
+          if (other === word || !other.isFrozen) return;
+
+          const dx = word.x - other.x;
+          const dy = word.y - other.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const minDist = (word.width + other.width) / 2;
+
+          if (dist < minDist) {
+            const overlap = minDist - dist;
+            const pushX = (dx / dist) * overlap * 0.5;
+            const pushY = (dy / dist) * overlap * 0.5;
+
+            word.x += pushX;
+            word.y += pushY;
+            other.x -= pushX;
+            other.y -= pushY;
+          }
+        });
+
+        word.elem.style.left = `${word.x}px`;
+        word.elem.style.top = `${word.y}px`;
+        word.elem.style.transform = `translate(-50%, -50%) rotate(${word.rotation}rad)`;
+      });
+
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animationFrameRef.current);
+    };
+  }, [effectStarted, gravity]);
+
+  const handleTrigger = () => {
+    if (!effectStarted) setEffectStarted(true);
+  };
 
   return (
-    <section className="relative w-full overflow-hidden select-none bg-slate-950" ref={targetSection}>
-      
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-900/30 to-slate-950" />
-      
-      {/* Centered gradient orb */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-3xl" />
-      
-      {/* Floating decorative elements */}
-      <div className="absolute inset-0 overflow-hidden opacity-10">
-        <div className="absolute w-px h-32 top-20 left-1/4 bg-gradient-to-b from-transparent via-purple-500 to-transparent animate-float" />
-        <div className="absolute w-px h-32 bottom-20 right-1/4 bg-gradient-to-b from-transparent via-pink-500 to-transparent animate-float" style={{ animationDelay: '1s' }} />
-        <div className="absolute w-24 h-px top-1/2 left-20 bg-gradient-to-r from-transparent via-purple-500 to-transparent animate-float-horizontal" />
-        <div className="absolute w-24 h-px top-1/2 right-20 bg-gradient-to-r from-transparent via-pink-500 to-transparent animate-float-horizontal" style={{ animationDelay: '1.5s' }} />
-      </div>
+    <div
+      id="falling-text"
+      ref={containerRef}
+      className="relative z-[1] w-full cursor-pointer text-center overflow-hidden"
+      style={{ minHeight: "450px", paddingTop: "60px" }}
+      onClick={trigger === "click" ? handleTrigger : undefined}
+      onMouseEnter={trigger === "hover" ? handleTrigger : undefined}
+    >
+      <div
+        ref={textRef}
+        className="inline-block font-bold"
+        style={{
+          fontSize,
+          lineHeight: 1.4,
+        }}
+      />
+    </div>
+  );
+};
 
-      <div className="relative z-10 py-32 tall:py-48 section-container">
+const QuoteSection = () => {
+  return (
+    <section className="relative w-full overflow-hidden select-none bg-slate-950">
+
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-900/30 to-slate-950" />
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-3xl" />
+
+      <div className="relative z-10 py-32 section-container">
         <div className="flex flex-col items-center max-w-5xl px-6 mx-auto">
-          
-          {/* Decorative quote icon */}
+
           <div className="mb-8">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl blur-xl" />
@@ -67,57 +252,37 @@ const QuoteSection = () => {
             </div>
           </div>
 
-          {/* Main Quote */}
-          <h1
-            ref={quoteRef}
-            className={`text-4xl md:text-5xl lg:text-6xl font-bold text-center leading-tight text-white ${
-              willChange ? "will-change-opacity" : ""
-            }`}
-          >
-            I have a{" "}
-            <span className="relative inline-block">
-              <span className="text-transparent text-strong bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400" style={{ backgroundSize: "200% 200%" }}>
-                strong
-              </span>
-              <div className="absolute left-0 right-0 h-3 bottom-1 bg-gradient-to-r from-purple-500/30 to-pink-500/30 blur-lg" />
-            </span>{" "}
-            obsession for attention to detail.
-          </h1>
+          <div className="w-full">
+            <FallingText
+              text="I have a strong obsession for attention to detail."
+              highlightWords={["strong", "obsession", "attention", "detail"]}
+              trigger="hover"
+              gravity={0.8}
+              fontSize="clamp(2rem, 5vw, 3.75rem)"
+            />
+          </div>
 
-          {/* Subtitle/Description */}
+          <button
+            onClick={() => window.location.reload()}
+            className="flex items-center gap-2 px-4 py-2 mt-6 text-sm text-white transition bg-purple-600 rounded-full hover:bg-purple-700"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Refresh
+          </button>
+
           <p className="max-w-2xl mt-8 text-lg text-center md:text-xl text-slate-400">
             Every pixel, every interaction, every line of code matters in creating exceptional experiences.
           </p>
 
-          {/* Decorative sparkles */}
           <div className="flex items-center gap-3 mt-12">
             <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" />
-            <Sparkles className="w-5 h-5 text-purple-400 animate-pulse" style={{ animationDelay: '0.5s' }} />
-            <div className="w-2 h-2 bg-pink-400 rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
+            <Sparkles className="w-5 h-5 text-purple-400 animate-pulse" style={{ animationDelay: "0.5s" }} />
+            <div className="w-2 h-2 bg-pink-400 rounded-full animate-pulse" style={{ animationDelay: "1s" }} />
           </div>
 
         </div>
       </div>
 
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0); opacity: 0.3; }
-          50% { transform: translateY(-20px); opacity: 0.6; }
-        }
-        
-        @keyframes float-horizontal {
-          0%, 100% { transform: translateX(0); opacity: 0.3; }
-          50% { transform: translateX(20px); opacity: 0.6; }
-        }
-        
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
-        }
-        
-        .animate-float-horizontal {
-          animation: float-horizontal 4s ease-in-out infinite;
-        }
-      `}</style>
     </section>
   );
 };
