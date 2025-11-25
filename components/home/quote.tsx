@@ -8,12 +8,12 @@ const FallingText = ({
   gravity = 0.8,
   fontSize = '2rem'
 }) => {
-  const containerRef = useRef(null);
-  const textRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const textRef = useRef<HTMLDivElement | null>(null);
   const [effectStarted, setEffectStarted] = useState(false);
-  const wordsDataRef = useRef([]);
-  const animationFrameRef = useRef(null);
-  const mouseRef = useRef({ x: 0, y: 0, pressed: false, draggedWord: null });
+  const wordsDataRef = useRef<any[]>([]);
+  const animationFrameRef = useRef<number | null>(null);
+  const mouseRef = useRef<any>({ x: 0, y: 0, pressed: false, draggedWord: null });
 
   useEffect(() => {
     if (!textRef.current) return;
@@ -70,15 +70,16 @@ const FallingText = ({
       elem.style.transformOrigin = 'center center';
     });
 
-    const handleMouseMove = (e) => {
-      const rect = containerRef.current.getBoundingClientRect();
+    // ⭐ FIXED: Proper DOM MouseEvent typing
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = containerRef.current!.getBoundingClientRect();
       mouseRef.current.x = e.clientX - rect.left;
       mouseRef.current.y = e.clientY - rect.top;
     };
 
-    const handleMouseDown = (e) => {
+    const handleMouseDown = (e: MouseEvent) => {
       mouseRef.current.pressed = true;
-      const rect = containerRef.current.getBoundingClientRect();
+      const rect = containerRef.current!.getBoundingClientRect();
       const mx = e.clientX - rect.left;
       const my = e.clientY - rect.top;
 
@@ -136,7 +137,6 @@ const FallingText = ({
           word.vy = 0;
           word.rotationSpeed = (Math.random() - 0.5) * 0.2;
         } else {
-          // Gravity
           word.vy += gravity;
           word.x += word.vx;
           word.y += word.vy;
@@ -146,7 +146,6 @@ const FallingText = ({
           word.vy *= 0.995;
         }
 
-        // Floor (FREEZE)
         if (word.y > height - word.height / 2 - 10) {
           word.y = height - word.height / 2 - 10;
 
@@ -162,7 +161,6 @@ const FallingText = ({
           }
         }
 
-        // Walls
         if (word.x > width - word.width / 2) {
           word.x = width - word.width / 2;
           word.vx *= -word.restitution;
@@ -172,7 +170,6 @@ const FallingText = ({
           word.vx *= -word.restitution;
         }
 
-        // Prevent overlap with frozen words
         wordsDataRef.current.forEach(other => {
           if (other === word || !other.isFrozen) return;
 
@@ -204,7 +201,7 @@ const FallingText = ({
     animate();
 
     return () => {
-      cancelAnimationFrame(animationFrameRef.current);
+      cancelAnimationFrame(animationFrameRef.current!);
     };
   }, [effectStarted, gravity]);
 
@@ -262,13 +259,13 @@ const QuoteSection = () => {
             />
           </div>
 
-          <button
+          {/* <button
             onClick={() => window.location.reload()}
             className="flex items-center gap-2 px-4 py-2 mt-6 text-sm text-white transition bg-purple-600 rounded-full hover:bg-purple-700"
           >
             <RefreshCw className="w-4 h-4" />
             Refresh
-          </button>
+          </button> */}
 
           <p className="max-w-2xl mt-8 text-lg text-center md:text-xl text-slate-400">
             Every pixel, every interaction, every line of code matters in creating exceptional experiences.
