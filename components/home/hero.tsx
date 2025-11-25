@@ -53,14 +53,14 @@ const HeroSection = React.memo(() => {
             y: -60, 
             opacity: 0, 
             rotation: -15,
-            duration: 1.4, 
+            duration: 1.2, 
             ease: "power3.out" 
           },
           // "I" - Scale up with bounce
           { 
             scale: 0, 
             opacity: 0, 
-            duration: 1.2, 
+            duration: 1, 
             ease: "back.out(2)" 
           },
           // "am" - Slide from left with rotation
@@ -68,7 +68,7 @@ const HeroSection = React.memo(() => {
             x: -80, 
             opacity: 0,
             rotation: 20, 
-            duration: 1.3, 
+            duration: 1.1, 
             ease: "power2.out" 
           },
           // "Yash" - 3D flip
@@ -76,7 +76,7 @@ const HeroSection = React.memo(() => {
             rotationY: 180, 
             opacity: 0, 
             transformOrigin: "50% 50%",
-            duration: 1.5, 
+            duration: 1.3, 
             ease: "power3.out" 
           }
         ];
@@ -91,8 +91,8 @@ const HeroSection = React.memo(() => {
             scale: 1,
             rotation: 0,
             rotationY: 0,
-            delay: 0.3 + (index * 0.3),
-            duration: 1.2,
+            delay: 0.2 + (index * 0.25),
+            duration: 1,
             ease: "power2.out"
           }
         );
@@ -106,10 +106,10 @@ const HeroSection = React.memo(() => {
         {
           scaleX: 1,
           opacity: 1,
-          duration: 1.5,
+          duration: 1.3,
           ease: "power2.out",
-          delay: 0.2,
-          stagger: 0.3
+          delay: 0.15,
+          stagger: 0.25
         }
       );
     }
@@ -119,69 +119,85 @@ const HeroSection = React.memo(() => {
       const words = headingRef.current.querySelectorAll(".word");
       
       words.forEach((word, index) => {
-        const effects = [
-          // Word 1: "Crafting" - Slide up with fade and slight rotation
-          { 
-            y: 80, 
-            opacity: 0,
-            rotation: -10, 
-            duration: 1.5, 
-            ease: "power3.out" 
-          },
-          // Word 2: "elegant," - 3D Rotate with perspective
-          { 
-            rotationX: -90, 
-            opacity: 0, 
-            transformOrigin: "50% 50%",
-            duration: 1.4, 
-            ease: "back.out(1.5)" 
-          },
-          // Word 3: "performant" - Scale and blur
-          { 
-            scale: 0.3, 
-            opacity: 0,
-            filter: "blur(15px)", 
-            duration: 1.6, 
-            ease: "elastic.out(1, 0.6)" 
-          },
-          // Word 4: "web" - Slide from right with rotation
-          { 
-            x: 120, 
-            opacity: 0,
-            rotation: 25, 
-            duration: 1.4, 
-            ease: "power2.out" 
-          },
-          // Word 5: "experiences" - Wave effect with blur
-          { 
-            y: -70,
-            filter: "blur(25px)", 
-            opacity: 0, 
-            duration: 1.7, 
-            ease: "power3.out" 
-          }
-        ];
-        
-        gsap.fromTo(
-          word,
-          effects[index] || effects[0],
-          {
-            y: 0,
-            x: 0,
-            opacity: 1,
-            scale: 1,
-            rotation: 0,
-            rotationX: 0,
-            filter: "blur(0px)",
-            delay: 1.8 + (index * 0.35), // Slower stagger, starts after intro
-            duration: 1.4,
-            ease: "power2.out"
-          }
-        );
+        // Special handling for "experiences" - letter by letter
+        if (index === 4) {
+          const letters = word.querySelectorAll(".letter");
+          gsap.fromTo(
+            letters,
+            {
+              opacity: 0,
+              scale: 0,
+              y: -50,
+              rotation: 180
+            },
+            {
+              opacity: 1,
+              scale: 1,
+              y: 0,
+              rotation: 0,
+              duration: 0.6,
+              ease: "back.out(2)",
+              stagger: 0.06,
+              delay: 1.5 + (index * 0.28)
+            }
+          );
+        } else {
+          const effects = [
+            // Word 1: "Crafting" - Slide up with fade and slight rotation
+            { 
+              y: 80, 
+              opacity: 0,
+              rotation: -10, 
+              duration: 1.3, 
+              ease: "power3.out" 
+            },
+            // Word 2: "elegant," - 3D Rotate with perspective
+            { 
+              rotationX: -90, 
+              opacity: 0, 
+              transformOrigin: "50% 50%",
+              duration: 1.2, 
+              ease: "back.out(1.5)" 
+            },
+            // Word 3: "performant" - Scale and blur
+            { 
+              scale: 0.3, 
+              opacity: 0,
+              filter: "blur(15px)", 
+              duration: 1.4, 
+              ease: "elastic.out(1, 0.6)" 
+            },
+            // Word 4: "web" - Slide from right with rotation
+            { 
+              x: 120, 
+              opacity: 0,
+              rotation: 25, 
+              duration: 1.2, 
+              ease: "power2.out" 
+            }
+          ];
+          
+          gsap.fromTo(
+            word,
+            effects[index] || effects[0],
+            {
+              y: 0,
+              x: 0,
+              opacity: 1,
+              scale: 1,
+              rotation: 0,
+              rotationX: 0,
+              filter: "blur(0px)",
+              delay: 1.5 + (index * 0.28),
+              duration: 1.2,
+              ease: "power2.out"
+            }
+          );
+        }
       });
     }
 
-    // Animate other elements with slower timing
+    // Animate other elements with faster timing
     const terminalSection = targetSection.current.querySelector(".terminal-section");
     if (terminalSection) {
       gsap.fromTo(
@@ -195,9 +211,9 @@ const HeroSection = React.memo(() => {
           y: 0,
           opacity: 1,
           scale: 1,
-          duration: 1.3,
+          duration: 1.1,
           ease: "power2.out",
-          delay: 3.5
+          delay: 2.9
         }
       );
     }
@@ -216,10 +232,10 @@ const HeroSection = React.memo(() => {
           y: 0,
           opacity: 1,
           scale: 1,
-          duration: 1.2,
+          duration: 1,
           ease: "back.out(1.5)",
-          delay: 4.2,
-          stagger: 0.25
+          delay: 3.5,
+          stagger: 0.2
         }
       );
     }
@@ -238,13 +254,35 @@ const HeroSection = React.memo(() => {
           scale: 1,
           opacity: 1,
           rotation: 0,
-          duration: 1,
+          duration: 0.8,
           ease: "elastic.out(1, 0.5)",
-          delay: 4.8,
-          stagger: 0.15
+          delay: 4,
+          stagger: 0.12
         }
       );
     }
+
+    // Animate floating skill icons one by one
+    const floatingIcons = targetSection.current.querySelectorAll(".floating-icon");
+    gsap.fromTo(
+      floatingIcons,
+      {
+        scale: 0,
+        opacity: 0,
+        y: -100,
+        rotation: -360
+      },
+      {
+        scale: 1,
+        opacity: 1,
+        y: 0,
+        rotation: 0,
+        duration: 1.2,
+        ease: "elastic.out(1, 0.6)",
+        delay: 4.5,
+        stagger: 0.2
+      }
+    );
   };
 
   useEffect(() => {
@@ -273,8 +311,8 @@ const HeroSection = React.memo(() => {
         <Image
           src={`/social/${key}.svg`}
           alt={key}
-          width={18}
-          height={18}
+          width={40}
+          height={40}
           className="transition-transform duration-300 group-hover:scale-110"
         />
       </a>
@@ -348,14 +386,26 @@ const HeroSection = React.memo(() => {
           style={{ perspective: "1000px" }}
         >
           <span className="inline-block opacity-0 word">Crafting</span>{" "}
-          <span className="inline-block text-transparent opacity-0 word bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text">
-            elegant,
+          <span className="inline-block leading-normal text-transparent opacity-0 word bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text">
+            Elegant,
           </span>{" "}
           <span className="inline-block text-transparent opacity-0 word bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text">
-            performant
+            Performant
           </span>{" "}
-          <span className="inline-block opacity-0 word">web</span>{" "}
-          <span className="inline-block opacity-0 word">experiences</span>
+          <span className="inline-block opacity-0 word">Web</span>{" "}
+          <span className="inline-block word">
+            <span className="inline-block opacity-0 letter">E</span>
+            <span className="inline-block opacity-0 letter">x</span>
+            <span className="inline-block opacity-0 letter">p</span>
+            <span className="inline-block opacity-0 letter">e</span>
+            <span className="inline-block opacity-0 letter">r</span>
+            <span className="inline-block opacity-0 letter">i</span>
+            <span className="inline-block opacity-0 letter">e</span>
+            <span className="inline-block opacity-0 letter">n</span>
+            <span className="inline-block opacity-0 letter">c</span>
+            <span className="inline-block opacity-0 letter">e</span>
+            <span className="inline-block opacity-0 letter">s.</span>
+          </span>
         </h1>
 
         <div className="flex items-center justify-center gap-3 text-xl font-medium opacity-0 terminal-section text-slate-200 sm:text-2xl">
@@ -389,30 +439,30 @@ const HeroSection = React.memo(() => {
         </div>
       </div>
 
-      {/* Floating skill icons */}
-      <div className="absolute top-16 left-8 w-14 h-14 animate-float">
+      {/* Floating skill icons with entry animations */}
+      <div className="absolute opacity-0 floating-icon top-16 left-8 w-14 h-14" style={{ animationDelay: "0s" }}>
         <Image
           src="/skills/react.svg"
           alt="React"
           width={56}
           height={56}
-          className="object-contain"
+          className="object-contain animate-float"
         />
       </div>
       <div
-        className="absolute top-32 right-12 w-14 h-14 animate-float"
+        className="absolute opacity-0 floating-icon top-32 right-12 w-14 h-14"
         style={{ animationDelay: "0.8s" }}
       >
         <Image
-          src="/skills/Figma.svg"
+          src="/skills/figma.svg"
           alt="Figma"
           width={56}
           height={56}
-          className="object-contain"
+          className="object-contain animate-float"
         />
       </div>
       <div
-        className="absolute bottom-40 left-20 w-14 h-14 animate-float"
+        className="absolute opacity-0 floating-icon bottom-40 left-20 w-14 h-14"
         style={{ animationDelay: "1.5s" }}
       >
         <Image
@@ -420,11 +470,11 @@ const HeroSection = React.memo(() => {
           alt="Next.js"
           width={56}
           height={56}
-          className="object-contain"
+          className="object-contain animate-float"
         />
       </div>
       <div
-        className="absolute bottom-28 right-16 w-14 h-14 animate-float"
+        className="absolute opacity-0 floating-icon bottom-28 right-16 w-14 h-14"
         style={{ animationDelay: "2.2s" }}
       >
         <Image
@@ -432,7 +482,7 @@ const HeroSection = React.memo(() => {
           alt="Tailwind"
           width={56}
           height={56}
-          className="object-contain"
+          className="object-contain animate-float"
         />
       </div>
 
