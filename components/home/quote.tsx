@@ -45,9 +45,13 @@ const FallingText = ({
     if (!effectStarted || !textRef.current || !containerRef.current) return;
 
     const containerRect = containerRef.current.getBoundingClientRect();
-    const wordSpans = textRef.current.querySelectorAll('span');
 
-    wordsDataRef.current = [...wordSpans].map((elem, index) => {
+    // ⭐ FIXED HERE
+    const wordSpans = Array.from(
+      textRef.current.querySelectorAll('span') as NodeListOf<HTMLSpanElement>
+    );
+
+    wordsDataRef.current = wordSpans.map((elem, index) => {
       const rect = elem.getBoundingClientRect();
       return {
         elem,
@@ -70,7 +74,6 @@ const FallingText = ({
       elem.style.transformOrigin = 'center center';
     });
 
-    // ⭐ FIXED: Proper DOM MouseEvent typing
     const handleMouseMove = (e: MouseEvent) => {
       const rect = containerRef.current!.getBoundingClientRect();
       mouseRef.current.x = e.clientX - rect.left;
@@ -258,14 +261,6 @@ const QuoteSection = () => {
               fontSize="clamp(2rem, 5vw, 3.75rem)"
             />
           </div>
-
-          {/* <button
-            onClick={() => window.location.reload()}
-            className="flex items-center gap-2 px-4 py-2 mt-6 text-sm text-white transition bg-purple-600 rounded-full hover:bg-purple-700"
-          >
-            <RefreshCw className="w-4 h-4" />
-            Refresh
-          </button> */}
 
           <p className="max-w-2xl mt-8 text-lg text-center md:text-xl text-slate-400">
             Every pixel, every interaction, every line of code matters in creating exceptional experiences.
