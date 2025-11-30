@@ -21,21 +21,24 @@ const HeroSection = React.memo(() => {
   const introRef = useRef<HTMLDivElement | null>(null);
 
   const initTypeAnimation = () => {
-    if (!typedSpanElement.current || typedInstanceRef.current) return null;
+  if (!typedSpanElement.current || typedInstanceRef.current) return null;
 
-    const typed = new Typed(typedSpanElement.current, {
-      strings: TYPED_STRINGS,
-      typeSpeed: 60,
-      backSpeed: 40,
-      backDelay: 1200,
-      loop: true,
-      showCursor: true,
-      cursorChar: "|",
-    });
+  const typed = new Typed(typedSpanElement.current, {
+    strings: TYPED_STRINGS,
+    typeSpeed: 45,        // smoother typing
+    backSpeed: 30,        // softer backspacing
+    backDelay: 1000,      // shorter pause before deleting
+    startDelay: 300,      // smooth initial delay
+    smartBackspace: true, // only backspace what’s needed
+    loop: true,
+    showCursor: true,
+    cursorChar: "|",      // keep this (optional)
+  });
 
-    typedInstanceRef.current = typed;
-    return typed;
-  };
+  typedInstanceRef.current = typed;
+  return typed;
+};
+
 
   const initRevealAnimation = () => {
     if (!targetSection.current) return;
@@ -411,7 +414,8 @@ const HeroSection = React.memo(() => {
         <div className="flex items-center justify-center gap-3 text-xl font-medium opacity-0 terminal-section text-slate-200 sm:text-2xl">
           <Terminal className="flex-shrink-0 w-6 h-6 text-emerald-400" />
           <span ref={typedSpanElement} />
-          <span className="cursor-blink">|</span>
+          <span ref={typedSpanElement} />
+
         </div>
 
         <div className="flex flex-wrap justify-center gap-6 mt-8 buttons-section">

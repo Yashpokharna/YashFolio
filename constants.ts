@@ -41,9 +41,10 @@ export const SOCIAL_LINKS = {
   github: "https://github.com/Yashpokharna",
   instagram: "https://www.instagram.com/yash__pokharna/",
   facebook: "https://www.facebook.com/yash.pokharna.2002/",
+  // behance: "https://www.behance.net/yashpokharna2002",
   // dribbble: "https://dribbble.com/yash-pokharna",
   twitter: "https://x.com/YashPokharna19",
-  discord: "https://discord.com/users/yashpokharna"
+  // discord: "https://discord.com/users/yashpokharna"
 };
 
 export interface IProject {
