@@ -46,7 +46,7 @@ const Footer = () => {
         ></Button>
       </div>
       <h2 className="mt-8 text-sm text-center sm:text-base">
-        Made with 🤍 by Yash 
+        Hand-coded with ⚡ by Yash
       </h2>
       {/* <h2 className="mt-8 text-sm -8 center sm:text-base">
         © - 2025
