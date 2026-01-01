@@ -22,9 +22,9 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "noImplicitAny": true,
-    "incremental": true,
+    "incremental": true
   },
   "include": [
     "next-env.d.ts",
