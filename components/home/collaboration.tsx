@@ -1,114 +1,91 @@
+"use client"; // ensure this is client-side only if using Next.js 13+
+
 import { gsap, Linear } from "gsap";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-import { isSmallScreen, NO_MOTION_PREFERENCE_QUERY } from "pages";
+
+const NO_MOTION_PREFERENCE_QUERY = "(prefers-reduced-motion: no-preference)";
+const isSmallScreen = () => typeof window !== "undefined" && window.innerWidth < 768;
 
 const COLLABORATION_STYLE = {
   SLIDING_TEXT: "opacity-20 text-5xl md:text-7xl font-bold whitespace-nowrap",
   SECTION:
-    "w-full relative select-none tall:py-36 py-48 section-container flex flex-col",
-  TITLE: "mt-6 md:mt-8 font-medium text-4xl md:text-5xl text-center",
+    "w-full relative select-none tall:py-36 py-48 section-container flex flex-col items-center overflow-hidden",
+  TITLE: "mt-6 md:mt-8 font-medium text-4xl md:text-5xl text-center z-10",
 };
 
 const CollaborationSection = () => {
-  const quoteRef: MutableRefObject<HTMLDivElement> = useRef(null);
-  const targetSection: MutableRefObject<HTMLDivElement> = useRef(null);
+  const quoteRef: MutableRefObject<HTMLHeadingElement | null> = useRef(null);
+  const targetSection: MutableRefObject<HTMLDivElement | null> = useRef(null);
+  const leftTextRef = useRef<HTMLParagraphElement | null>(null);
+  const rightTextRef = useRef<HTMLParagraphElement | null>(null);
 
-  const [willChange, setwillChange] = useState(false);
-
-  const initTextGradientAnimation = (
-    targetSection: MutableRefObject<HTMLDivElement>
-  ): ScrollTrigger => {
-    const timeline = gsap.timeline({ defaults: { ease: Linear.easeNone } });
-    timeline
-      .from(quoteRef.current, { opacity: 0, duration: 2 })
-      .to(quoteRef.current.querySelector(".text-strong"), {
-        backgroundPositionX: "100%",
-        duration: 1,
-      });
-
-    return ScrollTrigger.create({
-      trigger: targetSection.current,
-      start: "center bottom",
-      end: "center center",
-      scrub: 0,
-      animation: timeline,
-      onToggle: (self) => setwillChange(self.isActive),
-    });
-  };
-
-  const initSlidingTextAnimation = (
-    targetSection: MutableRefObject<HTMLDivElement>
-  ) => {
-    const slidingTl = gsap.timeline({ defaults: { ease: Linear.easeNone } });
-
-    slidingTl
-      .to(targetSection.current.querySelector(".ui-left"), {
-        xPercent: isSmallScreen() ? -500 : -150,
-      })
-      .from(
-        targetSection.current.querySelector(".ui-right"),
-        { xPercent: isSmallScreen() ? -500 : -150 },
-        "<"
-      );
-
-    return ScrollTrigger.create({
-      trigger: targetSection.current,
-      start: "top bottom",
-      end: "bottom top",
-      scrub: 0,
-      animation: slidingTl,
-    });
-  };
+  const [willChange, setWillChange] = useState(false);
 
   useEffect(() => {
-    const textBgAnimation = initTextGradientAnimation(targetSection);
-    let slidingAnimation: ScrollTrigger | undefined;
+    // only run on client
+    if (typeof window === "undefined") return;
+    if (!quoteRef.current || !targetSection.current) return;
 
-    const { matches } = window.matchMedia(NO_MOTION_PREFERENCE_QUERY);
+    // register ScrollTrigger
+    gsap.registerPlugin(ScrollTrigger);
 
-    if (matches) {
-      slidingAnimation = initSlidingTextAnimation(targetSection);
+    // ===== Gradient Text Animation =====
+    const strongText = quoteRef.current.querySelector(".text-strong");
+    if (strongText) {
+      gsap.from(quoteRef.current, { opacity: 0, duration: 1.5 });
+      gsap.to(strongText, {
+        backgroundPosition: "200% center",
+        duration: 3,
+        ease: Linear.easeNone,
+        repeat: -1,
+      });
     }
 
-    return () => {
-      textBgAnimation.kill();
-      slidingAnimation?.kill();
-    };
-  }, [quoteRef, targetSection]);
+    // ===== Sliding Text Animation (Marquee) =====
+    const distance = isSmallScreen() ? 800 : 400; // adjust for screen size
 
-  const renderSlidingText = (text: string, layoutClasses: string) => (
-    <p className={`${layoutClasses} ${COLLABORATION_STYLE.SLIDING_TEXT}`}>
-      {Array(5)
-        .fill(text)
-        .reduce((str, el) => str.concat(el), "")}
+    if (leftTextRef.current) {
+      gsap.to(leftTextRef.current, {
+        x: -distance,
+        duration: 15,
+        ease: Linear.easeNone,
+        repeat: -1,
+      });
+    }
+
+    if (rightTextRef.current) {
+      gsap.to(rightTextRef.current, {
+        x: distance,
+        duration: 15,
+        ease: Linear.easeNone,
+        repeat: -1,
+      });
+    }
+  }, []);
+
+  const renderSlidingText = (text: string, ref: MutableRefObject<HTMLParagraphElement | null>) => (
+    <p ref={ref} className={`${COLLABORATION_STYLE.SLIDING_TEXT}`}>
+      {Array(5).fill(text).join("")}
     </p>
-  );
-
-  const renderTitle = () => (
-    <h1
-      ref={quoteRef}
-      className={`${COLLABORATION_STYLE.TITLE} ${willChange ? "will-change-opacity" : ""
-        }`}
-    >
-      Interested in <span className="font-bold text-strong">Collaboration</span>
-      ?
-    </h1>
   );
 
   return (
     <section className={COLLABORATION_STYLE.SECTION} ref={targetSection}>
       {renderSlidingText(
         " User Interface Design  User Experience Design ",
-        "ui-left"
+        leftTextRef
       )}
 
-      {renderTitle()}
+      <h1 ref={quoteRef} className={COLLABORATION_STYLE.TITLE}>
+        Interested in <span className="font-bold text-strong">Collaboration</span>?
+      </h1>
 
       {renderSlidingText(
         " Frontend Development  Motion Graphics ",
-        "mt-6 md:mt-8 ui-right"
+        rightTextRef
       )}
+
       <div className="w-32 h-1 mx-auto mt-12 rounded-full bg-gradient-to-r from-purple-600 to-pink-500" />
     </section>
   );
