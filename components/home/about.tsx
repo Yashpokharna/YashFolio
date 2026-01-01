@@ -1,5 +1,5 @@
 import { gsap, Linear, Back } from "gsap";
-import React, { MutableRefObject, useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { Sparkles, Code2, Palette, Zap } from "lucide-react";
 import { MENULINKS} from "../../constants";
