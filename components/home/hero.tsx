@@ -1,7 +1,6 @@
 "use client";
 
-import React, { MutableRefObject, useEffect, useRef } from "react";
-import Typed from "typed.js";
+import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import {
@@ -9,36 +8,91 @@ import {
   Download,
   Mail,
   Terminal,
-  Code,
 } from "lucide-react";
 import { EMAIL, MENULINKS, SOCIAL_LINKS, TYPED_STRINGS } from "../../constants";
 
 const HeroSection = React.memo(() => {
-  const typedSpanElement: MutableRefObject<HTMLSpanElement | null> = useRef(null);
   const targetSection: MutableRefObject<HTMLDivElement | null> = useRef(null);
-  const typedInstanceRef = useRef<Typed | null>(null);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
   const introRef = useRef<HTMLDivElement | null>(null);
+  const [currentStringIndex, setCurrentStringIndex] = useState(0);
+  const textContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const initTypeAnimation = () => {
-  if (!typedSpanElement.current || typedInstanceRef.current) return null;
+  const initTextAnimation = () => {
+    if (!textContainerRef.current) return;
 
-  const typed = new Typed(typedSpanElement.current, {
-    strings: TYPED_STRINGS,
-    typeSpeed: 45,        // smoother typing
-    backSpeed: 30,        // softer backspacing
-    backDelay: 1000,      // shorter pause before deleting
-    startDelay: 300,      // smooth initial delay
-    smartBackspace: true, // only backspace what’s needed
-    loop: true,
-    showCursor: true,
-    cursorChar: "|",      // keep this (optional)
-  });
+    const animateText = () => {
+      const container = textContainerRef.current;
+      if (!container) return;
 
-  typedInstanceRef.current = typed;
-  return typed;
-};
+      // Get current text
+      const currentText = TYPED_STRINGS[currentStringIndex];
+      
+      // Split into words
+      const words = currentText.split(" ");
+      
+      // Clear container
+      container.innerHTML = "";
+      
+      // Create word spans
+      words.forEach((word, wordIndex) => {
+        const wordSpan = document.createElement("span");
+        wordSpan.className = "inline-block mx-1";
+        
+        // Split word into letters
+        word.split("").forEach((letter, letterIndex) => {
+          const letterSpan = document.createElement("span");
+          letterSpan.textContent = letter;
+          letterSpan.className = "inline-block";
+          letterSpan.style.opacity = "0";
+          wordSpan.appendChild(letterSpan);
+        });
+        
+        container.appendChild(wordSpan);
+      });
 
+      // Animate letters in
+      const letters = container.querySelectorAll("span span");
+      gsap.fromTo(
+        letters,
+        {
+          opacity: 0,
+          y: 20,
+          rotationX: -90,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          rotationX: 0,
+          duration: 0.4,
+          ease: "back.out(1.5)",
+          stagger: 0.03,
+          delay: 0.3,
+        }
+      );
+
+      // Animate out after delay
+      setTimeout(() => {
+        gsap.to(letters, {
+          opacity: 0,
+          y: -20,
+          rotationX: 90,
+          duration: 0.3,
+          ease: "power2.in",
+          stagger: 0.02,
+          onComplete: () => {
+            setCurrentStringIndex((prev) => (prev + 1) % TYPED_STRINGS.length);
+          },
+        });
+      }, 3000);
+    };
+
+    animateText();
+  };
+
+  useEffect(() => {
+    initTextAnimation();
+  }, [currentStringIndex]);
 
   const initRevealAnimation = () => {
     if (!targetSection.current) return;
@@ -289,17 +343,9 @@ const HeroSection = React.memo(() => {
   };
 
   useEffect(() => {
-    if (typeof window !== "undefined" && typedSpanElement.current) {
-      initTypeAnimation();
+    if (typeof window !== "undefined") {
       setTimeout(() => initRevealAnimation(), 300);
     }
-
-    return () => {
-      if (typedInstanceRef.current) {
-        typedInstanceRef.current.destroy();
-        typedInstanceRef.current = null;
-      }
-    };
   }, []);
 
   const renderSocialLinks = () =>
@@ -411,30 +457,35 @@ const HeroSection = React.memo(() => {
           </span>
         </h1>
 
+        {/* New animated text section - replaces typed.js */}
         <div className="flex items-center justify-center gap-3 text-xl font-medium opacity-0 terminal-section text-slate-200 sm:text-2xl">
           <Terminal className="flex-shrink-0 w-6 h-6 text-emerald-400" />
-          <span ref={typedSpanElement} />
-          <span ref={typedSpanElement} />
-
+          <div 
+            ref={textContainerRef}
+            className="relative min-h-[2em] flex items-center justify-center"
+            style={{ perspective: "800px" }}
+          />
         </div>
 
         <div className="flex flex-wrap justify-center gap-6 mt-8 buttons-section">
           <a
             href={`mailto:${EMAIL}`}
-            className="inline-flex items-center justify-center gap-3 px-8 py-4 font-semibold text-white transition shadow-lg opacity-0 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:shadow-pink-500/50"
+            className="inline-flex items-center justify-center gap-3 px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg opacity-0 group rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:shadow-pink-500/50 hover:scale-105"
           >
             <Mail className="w-5 h-5" />
             Get in touch
             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
           </a>
+
           <a
             href="/Yash_Resume.pdf"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center justify-center gap-3 px-8 py-4 text-sm font-semibold transition opacity-0 text-slate-200 rounded-xl bg-slate-900/40 backdrop-blur-sm hover:bg-slate-800/60"
+            className="inline-flex items-center justify-center gap-3 px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg opacity-0 group rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:shadow-pink-500/50 hover:scale-105"
           >
             <Download className="w-5 h-5" />
             Resume
+            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
           </a>
         </div>
 
@@ -504,14 +555,6 @@ const HeroSection = React.memo(() => {
         }
         .animate-float {
           animation: float 4s ease-in-out infinite;
-        }
-        .cursor-blink {
-          animation: blink 1.2s steps(2, start) infinite;
-        }
-        @keyframes blink {
-          to {
-            visibility: hidden;
-          }
         }
       `}</style>
     </section>
