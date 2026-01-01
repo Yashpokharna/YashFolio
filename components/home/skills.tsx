@@ -112,7 +112,7 @@ const SkillsSection = () => {
   return (
     <section
       className="relative w-full py-20 overflow-hidden bg-slate-950"
-      id={MENULINKS[2].ref}
+      id={MENULINKS[3].ref}
       ref={targetSection}
     >
       {/* Subtle background */}

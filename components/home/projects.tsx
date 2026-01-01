@@ -3,6 +3,8 @@ import { ExternalLink, Sparkles } from 'lucide-react';
 import { PROJECTS } from '../../constants';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
+import { MENULINKS } from "../../constants";
+
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -184,9 +186,10 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ isDesktop }) => {
 
   return (
     <section
-      className={`relative min-h-screen py-20 overflow-hidden bg-slate-950 ${
-        isDesktop ? '' : 'px-4'
-      }`}
+      id={MENULINKS[2].ref}   // <-- add this line
+  className={`relative min-h-screen py-20 overflow-hidden bg-slate-950 ${
+    isDesktop ? "" : "px-4"
+  }`}
     >
       {/* Subtle background */}
       <div

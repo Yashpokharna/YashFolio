@@ -60,7 +60,7 @@ const Footer = () => {
   return (
     <footer
       className="relative flex flex-col items-stretch w-full bg-cover select-none"
-      id={footerRef}
+      id={MENULINKS[4].ref}
     >
       <img
         src="/footer-curve.svg"

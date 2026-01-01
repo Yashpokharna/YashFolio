@@ -26,6 +26,24 @@ const Header = () => {
     };
   }, []);
 
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    if (menuVisible) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [menuVisible]);
+
+  const handleMenuToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setmenuVisible(!menuVisible);
+  };
+
   return (
     <>
       <header className={`fixed top-0 z-50 w-full select-none transition-all duration-500 ${
@@ -40,7 +58,7 @@ const Header = () => {
             className="h-full transition-all duration-300 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 blur-sm"
             style={{
               width: '100px',
-              transform: `translateX(${(mousePosition.x / window.innerWidth) * (window.innerWidth - 100)}px)`,
+              transform: `translateX(${(mousePosition.x / (typeof window !== 'undefined' ? window.innerWidth : 1)) * ((typeof window !== 'undefined' ? window.innerWidth : 1) - 100)}px)`,
             }}
           />
         </div>
@@ -78,11 +96,12 @@ const Header = () => {
           <nav className={`outer-menu ${menuVisible ? "menu-visible" : ""} relative`}>
             {/* Hamburger Button - Redesigned */}
             <button
-              className={`relative group flex items-center justify-center transition-all duration-500 link ${
+              className={`relative group flex items-center justify-center transition-all duration-500 link z-[60] ${
                 scrolled ? "w-10 h-10" : "w-11 h-11"
               }`}
-              onClick={() => setmenuVisible(!menuVisible)}
+              onClick={handleMenuToggle}
               aria-label="Toggle menu"
+              aria-expanded={menuVisible}
             >
               {/* Outer ring with gradient */}
               <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 transition-all duration-500 group-hover:scale-110 ${
@@ -113,7 +132,19 @@ const Header = () => {
               <Sparkles className="absolute w-3 h-3 text-pink-400 transition-all duration-500 opacity-0 -bottom-1 -left-1 group-hover:opacity-100 group-hover:animate-pulse" style={{ animationDelay: "0.3s" }} />
             </button>
 
-            <Menu setmenuVisible={setmenuVisible} />
+            {/* Menu Backdrop - Dark overlay */}
+            {menuVisible && (
+              <div 
+                className="fixed inset-0 z-40 transition-all duration-500 bg-black/70"
+                onClick={() => setmenuVisible(false)}
+                style={{ top: 0, left: 0, right: 0, bottom: 0 }}
+              />
+            )}
+
+            {/* Menu Component */}
+            <div className="relative z-50">
+              <Menu setmenuVisible={setmenuVisible} />
+            </div>
           </nav>
         </div>
 
