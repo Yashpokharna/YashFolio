@@ -248,16 +248,6 @@ a {
   padding-bottom: 1.25rem !important;
 }
 
-footer {
-  background: url("/footer-bg.svg"),
-    linear-gradient(
-      153.86deg,
-      #02494c 0%,
-      #016877 15.69%,
-      #0d576d 48.9%,
-      #004865 95.52%
-    );
-}
 
 .section-heading {
   @apply md:text-5xl text-4xl font-bold text-gradient w-fit;
