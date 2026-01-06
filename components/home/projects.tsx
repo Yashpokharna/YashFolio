@@ -212,7 +212,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ isDesktop }) => {
           >
             <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
             <span className="text-sm font-bold tracking-widest text-purple-300 uppercase">
-              Portfolio
+              My Works
             </span>
           </div>
 
@@ -223,7 +223,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ isDesktop }) => {
           >
             <span className="inline-block opacity-0 header-word">Featured</span>{' '}
             <span className="relative inline-block">
-              <span className="inline-block text-transparent opacity-0 header-word bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400">
+              <span className="inline-block leading-normal text-transparent opacity-0 header-word bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400">
                 Projects
               </span>
               <div className="absolute left-0 right-0 h-3 opacity-0 header-glow bottom-2 bg-gradient-to-r from-purple-500/30 to-pink-500/30 blur-lg" />
