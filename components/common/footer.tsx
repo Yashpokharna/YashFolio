@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useId, PointerEvent } from 'react';
 import { Mail, FileText, Github, Linkedin, Twitter, Instagram, Sparkles, ArrowRight, Code2, Rocket } from 'lucide-react';
 
 const EMAIL = "yashpokharna2002@gmail.com";
@@ -7,6 +7,154 @@ const SOCIAL_LINKS = {
     linkedin: "https://linkedin.com/in/yashpokharna",
     twitter: "https://twitter.com/yashpokharna",
     instagram: "https://instagram.com/yashpokharna"
+};
+
+// Curved Loop Component
+interface CurvedLoopProps {
+    marqueeText?: string;
+    speed?: number;
+    className?: string;
+    curveAmount?: number;
+    direction?: 'left' | 'right';
+    interactive?: boolean;
+}
+
+const CurvedLoop: React.FC<CurvedLoopProps> = ({
+    marqueeText = '',
+    speed = 2,
+    className,
+    curveAmount = 400,
+    direction = 'left',
+    interactive = true
+}) => {
+    const text = useMemo(() => {
+        const hasTrailing = /\s|\u00A0$/.test(marqueeText);
+        return (hasTrailing ? marqueeText.replace(/\s+$/, '') : marqueeText) + '\u00A0';
+    }, [marqueeText]);
+
+    const measureRef = useRef<SVGTextElement | null>(null);
+    const textPathRef = useRef<SVGTextPathElement | null>(null);
+    const pathRef = useRef<SVGPathElement | null>(null);
+    const [spacing, setSpacing] = useState(0);
+    const [offset, setOffset] = useState(0);
+    const uid = useId();
+    const pathId = `curve-${uid}`;
+    const pathD = `M-100,80 Q500,${80 + curveAmount} 1540,80`;
+
+    const dragRef = useRef(false);
+    const lastXRef = useRef(0);
+    const dirRef = useRef<'left' | 'right'>(direction);
+    const velRef = useRef(0);
+
+    const textLength = spacing;
+    const totalText = textLength
+        ? Array(Math.ceil(1800 / textLength) + 2)
+            .fill(text)
+            .join('')
+        : text;
+    const ready = spacing > 0;
+
+    useEffect(() => {
+        if (measureRef.current) setSpacing(measureRef.current.getComputedTextLength());
+    }, [text, className]);
+
+    useEffect(() => {
+        if (!spacing) return;
+        if (textPathRef.current) {
+            const initial = -spacing;
+            textPathRef.current.setAttribute('startOffset', initial + 'px');
+            setOffset(initial);
+        }
+    }, [spacing]);
+
+    useEffect(() => {
+        if (!spacing || !ready) return;
+        let frame = 0;
+        let animationOffset = offset;
+        
+        const step = () => {
+            if (!dragRef.current && textPathRef.current) {
+                const delta = dirRef.current === 'right' ? speed : -speed;
+                animationOffset += delta;
+                
+                const wrapPoint = spacing;
+                if (animationOffset <= -wrapPoint) animationOffset += wrapPoint;
+                if (animationOffset > 0) animationOffset -= wrapPoint;
+                
+                textPathRef.current.setAttribute('startOffset', animationOffset + 'px');
+            }
+            frame = requestAnimationFrame(step);
+        };
+        frame = requestAnimationFrame(step);
+        return () => cancelAnimationFrame(frame);
+    }, [spacing, speed, ready, offset]);
+
+    const onPointerDown = (e: PointerEvent) => {
+        if (!interactive) return;
+        dragRef.current = true;
+        lastXRef.current = e.clientX;
+        velRef.current = 0;
+        (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+        if (!interactive || !dragRef.current || !textPathRef.current) return;
+        const dx = e.clientX - lastXRef.current;
+        lastXRef.current = e.clientX;
+        velRef.current = dx;
+        const currentOffset = parseFloat(textPathRef.current.getAttribute('startOffset') || '0');
+        let newOffset = currentOffset + dx;
+        const wrapPoint = spacing;
+        if (newOffset <= -wrapPoint) newOffset += wrapPoint;
+        if (newOffset > 0) newOffset -= wrapPoint;
+        textPathRef.current.setAttribute('startOffset', newOffset + 'px');
+        setOffset(newOffset);
+    };
+
+    const endDrag = () => {
+        if (!interactive) return;
+        dragRef.current = false;
+        dirRef.current = velRef.current > 0 ? 'right' : 'left';
+    };
+
+    const cursorStyle = interactive ? (dragRef.current ? 'grabbing' : 'grab') : 'auto';
+
+    return (
+        <div
+            className="flex items-center justify-center w-full"
+            style={{ visibility: ready ? 'visible' : 'hidden', cursor: cursorStyle }}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={endDrag}
+            onPointerLeave={endDrag}
+        >
+            <svg
+                className="select-none w-full block text-[4rem] md:text-[5rem] lg:text-[6rem] font-black uppercase leading-none"
+                viewBox="0 0 1440 280"
+                preserveAspectRatio="xMidYMid meet"
+                style={{ height: 'auto', minHeight: '200px', overflow: 'visible' }}
+            >
+                <text ref={measureRef} xmlSpace="preserve" style={{ visibility: 'hidden', opacity: 0, pointerEvents: 'none' }}>
+                    {text}
+                </text>
+                <defs>
+                    <path ref={pathRef} id={pathId} d={pathD} fill="none" stroke="transparent" />
+                    <linearGradient id={`gradient-${uid}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style={{ stopColor: '#a855f7', stopOpacity: 0.3 }} />
+                        <stop offset="50%" style={{ stopColor: '#ec4899', stopOpacity: 0.5 }} />
+                        <stop offset="100%" style={{ stopColor: '#a855f7', stopOpacity: 0.3 }} />
+                    </linearGradient>
+                </defs>
+                {ready && (
+                    <text xmlSpace="preserve" className={className} fill={`url(#gradient-${uid})`}>
+                        <textPath ref={textPathRef} href={`#${pathId}`} startOffset={offset + 'px'} xmlSpace="preserve">
+                            {totalText}
+                        </textPath>
+                    </text>
+                )}
+            </svg>
+        </div>
+    );
 };
 
 const Footer = () => {
@@ -30,7 +178,7 @@ const Footer = () => {
     return (
         <footer className="relative w-full py-20 overflow-hidden select-none bg-slate-950">
             
-            {/* Background Pattern - Matching About Section with animations */}
+            {/* Background Pattern */}
             <div 
                 className="absolute inset-0 opacity-20"
                 style={{
@@ -38,8 +186,7 @@ const Footer = () => {
                         linear-gradient(rgba(139, 92, 246, 0.03) 1px, transparent 1px),
                         linear-gradient(90deg, rgba(139, 92, 246, 0.03) 1px, transparent 1px)
                     `,
-                    backgroundSize: '80px 80px',
-                    animation: 'gridMove 20s linear infinite'
+                    backgroundSize: '80px 80px'
                 }}
             />
 
@@ -63,37 +210,11 @@ const Footer = () => {
                 />
             </div>
 
-            {/* Floating particles */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {[...Array(15)].map((_, i) => (
-                    <div
-                        key={i}
-                        className="absolute w-1 h-1 bg-purple-400 rounded-full"
-                        style={{
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
-                            opacity: Math.random() * 0.5 + 0.2,
-                            animation: `float ${8 + Math.random() * 12}s ease-in-out infinite`,
-                            animationDelay: `${Math.random() * 5}s`
-                        }}
-                    />
-                ))}
-            </div>
-
             <style>{`
-                @keyframes float {
-                    0%, 100% { transform: translateY(0) translateX(0); }
-                    33% { transform: translateY(-20px) translateX(10px); }
-                    66% { transform: translateY(20px) translateX(-10px); }
-                }
-                @keyframes gradient-slide {
-                    0% { background-position: 0% 50%; }
-                    50% { background-position: 100% 50%; }
-                    100% { background-position: 0% 50%; }
-                }
-                @keyframes spin-slow {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
+                @keyframes float-orb {
+                    0%, 100% { transform: translate(0, 0) scale(1); }
+                    33% { transform: translate(30px, -30px) scale(1.1); }
+                    66% { transform: translate(-30px, 30px) scale(0.9); }
                 }
                 @keyframes pulse-slow {
                     0%, 100% { opacity: 1; }
@@ -177,7 +298,7 @@ const Footer = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col items-center justify-center gap-6 mb-20 sm:flex-row">
+                <div className="flex flex-col items-center justify-center gap-6 mb-8 sm:flex-row">
                     <a
                         href={`mailto:${EMAIL}`}
                         target="_blank"
@@ -204,6 +325,25 @@ const Footer = () => {
                         </div>
                     </a>
                 </div>
+
+                {/* Curved Loop Animation - Full Width */}
+            </div>
+            
+            <div className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mb-16 overflow-hidden py-8">
+                <CurvedLoop 
+                    marqueeText="Let's Build Something Amazing ✦ "
+                    speed={1.5}
+                    curveAmount={350}
+                    direction="left"
+                    interactive={true}
+                />
+                
+                {/* Gradient overlays for fade effect */}
+                <div className="absolute inset-y-0 left-0 w-32 pointer-events-none bg-gradient-to-r from-slate-950 to-transparent"></div>
+                <div className="absolute inset-y-0 right-0 w-32 pointer-events-none bg-gradient-to-l from-slate-950 to-transparent"></div>
+            </div>
+            
+            <div className="container relative z-10 max-w-6xl px-6 mx-auto">
 
                 {/* Divider */}
                 <div className="flex items-center justify-center gap-4 mb-12">
