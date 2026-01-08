@@ -8,6 +8,10 @@ import {
   Download,
   Mail,
   Terminal,
+  Github,
+  Linkedin,
+  Dribbble,
+  Instagram,
 } from "lucide-react";
 import { EMAIL, MENULINKS, SOCIAL_LINKS, TYPED_STRINGS } from "../../constants";
 
@@ -348,25 +352,6 @@ const HeroSection = React.memo(() => {
     }
   }, []);
 
-  const renderSocialLinks = () =>
-    Object.keys(SOCIAL_LINKS).map((key: keyof typeof SOCIAL_LINKS) => (
-      <a
-        key={key}
-        href={SOCIAL_LINKS[key]}
-        className="relative flex items-center justify-center transition-transform duration-300 rounded-lg w-11 h-11 bg-slate-900/60 backdrop-blur-sm hover:bg-slate-800/80 hover:-translate-y-1"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <Image
-          src={`/social/${key}.svg`}
-          alt={key}
-          width={40}
-          height={40}
-          className="transition-transform duration-300 group-hover:scale-110"
-        />
-      </a>
-    ));
-
   const { ref: heroSectionRef } = MENULINKS[0];
 
   return (
@@ -489,8 +474,63 @@ const HeroSection = React.memo(() => {
           </a>
         </div>
 
-        <div className="flex justify-center gap-6 mt-10 social-section">
-          {renderSocialLinks()}
+        {/* Updated Social Section - Matching Footer Design */}
+        <div className="flex justify-center gap-4 mt-10 social-section">
+          {[
+            { key: 'github', url: SOCIAL_LINKS.github },
+            { key: 'linkedin', url: SOCIAL_LINKS.linkedin },
+            { key: 'instagram', url: SOCIAL_LINKS.instagram },
+            { key: 'dribbble', url: 'https://dribbble.com/yashpokharna' },
+            { key: 'behance', url: 'https://behance.net/yashpokharna' },
+          ].map(({ key, url }) => {
+            const socialColors: Record<string, string> = {
+              github: 'from-gray-700 to-gray-900',
+              linkedin: 'from-blue-600 to-blue-800',
+              instagram: 'from-pink-500 via-purple-500 to-orange-500',
+              dribbble: 'from-pink-500 to-pink-700',
+              behance: 'from-blue-500 to-blue-700',
+            };
+
+            const socialIcons: Record<string, React.ComponentType<any>> = {
+              github: Github,
+              linkedin: Linkedin,
+              dribbble: Dribbble,
+              behance: (props: any) => (
+                <svg {...props} viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M6.5 4.5h3.8c1.7 0 3.1 1.4 3.1 3.1 0 1-.5 1.9-1.2 2.4.9.5 1.5 1.5 1.5 2.6 0 1.7-1.4 3.1-3.1 3.1H6.5V4.5zm2 4.5h1.8c.6 0 1.1-.5 1.1-1.1s-.5-1.1-1.1-1.1H8.5V9zm0 4.7h1.8c.6 0 1.1-.5 1.1-1.1 0-.6-.5-1.1-1.1-1.1H8.5v2.2zM15.5 6h5v1.5h-5V6zm.5 5.5c0-2.2 1.8-4 4-4s4 1.8 4 4c0 .3 0 .5-.1.8h-6c.3 1.1 1.3 1.9 2.4 1.9.8 0 1.5-.4 2-.9l1.3 1c-.8.9-2 1.5-3.3 1.5-2.2 0-4-1.8-4-4zm6.2-.8c-.3-1-1.2-1.7-2.2-1.7s-1.9.7-2.2 1.7h4.4z"/>
+                </svg>
+              ),
+              instagram: Instagram
+            };
+
+            const Icon = socialIcons[key];
+
+            return (
+              <a
+                key={key}
+                href={url}
+                target="_blank"
+                rel="noreferrer"
+                className="relative group"
+              >
+                <div className="relative p-4 overflow-hidden transition-all duration-500 rounded-2xl bg-slate-900/30 backdrop-blur-sm hover:scale-110 hover:bg-slate-900/50">
+                  <div className={`
+                    absolute inset-0 opacity-0 group-hover:opacity-20
+                    bg-gradient-to-br ${socialColors[key]}
+                    transition-opacity duration-500 blur-2xl
+                  `}></div>
+
+                  <div className="relative z-10 flex flex-col items-center gap-2">
+                    <Icon className="w-5 h-5 transition-all duration-500 text-slate-300 group-hover:text-white group-hover:scale-125 group-hover:rotate-12" />
+                    <span className="text-xs font-semibold capitalize transition-colors duration-300 text-slate-300 group-hover:text-white">
+                      {key}
+                    </span>
+                  </div>
+                  <div className="absolute inset-0 transition-transform duration-1000 -translate-x-full skew-x-12 group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+                </div>
+              </a>
+            );
+          })}
         </div>
       </div>
 

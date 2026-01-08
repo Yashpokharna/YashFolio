@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect, useMemo, useId, PointerEvent } from 'react';
-import { Mail, FileText, Github, Linkedin, Twitter, Instagram, Sparkles, ArrowRight, Code2, Rocket } from 'lucide-react';
+import { Mail, Github, Linkedin, Twitter, Instagram, Sparkles, ArrowRight, Code2, Rocket } from 'lucide-react';
 
 const EMAIL = "yashpokharna2002@gmail.com";
 const SOCIAL_LINKS = {
     github: "https://github.com/Yashpokharna",
-    linkedin: "https://linkedin.com/in/yashpokharna",
+    linkedin: "https://linkedin.com/in/yash-pokharna",
     twitter: "https://twitter.com/yashpokharna",
     instagram: "https://instagram.com/yashpokharna"
 };
@@ -242,13 +242,13 @@ const Footer = () => {
 
                     <h2 className="mb-6 text-6xl font-black leading-none text-white md:text-7xl lg:text-8xl">
                         <span className="inline-block transition-transform duration-300 cursor-default">
-                            Ready
+                            Ready To 
                         </span>
                         {' '}
                         <span 
                             className="inline-block font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400"
                         >
-                            to talk?
+                            Talk?
                         </span>
                     </h2>
 
@@ -297,31 +297,36 @@ const Footer = () => {
                     })}
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex flex-col items-center justify-center gap-6 mb-8 sm:flex-row">
+                {/* Contact Section - Unique Design */}
+                <div className="relative flex items-center justify-center mb-2">
                     <a
                         href={`mailto:${EMAIL}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="relative px-10 py-5 overflow-hidden transition-all duration-300 group rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-2xl hover:shadow-purple-500/50"
+                        className="relative group"
                     >
-                        <div className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400"></div>
-                        <div className="relative flex items-center gap-3 text-lg font-bold text-white">
-                            <Mail className="w-6 h-6" />
-                            <span>Send Message</span>
-                            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
-                        </div>
-                    </a>
-
-                    <a
-                        href="/Yash_Resume.pdf"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="relative px-10 py-5 overflow-hidden font-bold transition-all duration-300 group rounded-2xl text-slate-300 hover:text-white bg-slate-900/30 backdrop-blur-sm hover:bg-slate-900/50"
-                    >
-                        <div className="relative flex items-center gap-3 text-lg">
-                            <FileText className="w-6 h-6" />
-                            <span>Download Resume</span>
+                        <div className="relative px-8 py-6 overflow-hidden transition-all duration-500 border bg-slate-900/40 backdrop-blur-xl rounded-3xl border-slate-800/50 hover:border-purple-500/50 hover:bg-slate-900/60">
+                            {/* Animated gradient border effect */}
+                            <div className="absolute inset-0 transition-opacity duration-500 opacity-0 rounded-3xl group-hover:opacity-100 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-purple-500/20 blur-xl"></div>
+                            
+                            <div className="relative flex flex-col items-center gap-4 md:flex-row md:gap-6">
+                                {/* Icon with pulse effect */}
+                                <div className="relative">
+                                    <div className="absolute inset-0 rounded-full bg-purple-500/30 blur-md animate-pulse"></div>
+                                    <div className="relative flex items-center justify-center w-12 h-12 transition-transform duration-300 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 group-hover:scale-110">
+                                        <Mail className="w-6 h-6 text-white" />
+                                    </div>
+                                </div>
+                                
+                                {/* Text content */}
+                                <div className="text-center md:text-left">
+                                    <p className="mb-1 text-sm font-semibold tracking-wider text-purple-300 uppercase">Drop me a line</p>
+                                    <p className="text-lg font-bold text-white transition-all duration-300 md:text-xl group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400">
+                                        {EMAIL}
+                                    </p>
+                                </div>
+                                
+                                {/* Arrow */}
+                                <ArrowRight className="hidden w-5 h-5 text-purple-400 transition-transform duration-300 group-hover:translate-x-2 md:block" />
+                            </div>
                         </div>
                     </a>
                 </div>
@@ -329,9 +334,9 @@ const Footer = () => {
                 {/* Curved Loop Animation - Full Width */}
             </div>
             
-            <div className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mb-16 overflow-hidden py-8">
+            <div className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mb-16 -mt-16 overflow-hidden py-8">
                 <CurvedLoop 
-                    marqueeText="Let's Build Something Amazing ✦ "
+                    marqueeText="Let’s turn ideas into experiences ✦ "
                     speed={1.5}
                     curveAmount={350}
                     direction="left"
