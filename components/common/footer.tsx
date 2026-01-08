@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect, useMemo, useId, PointerEvent } from 'react';
-import { Mail, Github, Linkedin, Twitter, Instagram, Sparkles, ArrowRight, Code2, Rocket } from 'lucide-react';
+import { Mail, Github, Linkedin, Dribbble, Instagram, Sparkles, ArrowRight, Code2, Rocket } from 'lucide-react';
 
 const EMAIL = "yashpokharna2002@gmail.com";
 const SOCIAL_LINKS = {
     github: "https://github.com/Yashpokharna",
-    linkedin: "https://linkedin.com/in/yash-pokharna",
-    twitter: "https://twitter.com/yashpokharna",
-    instagram: "https://instagram.com/yashpokharna"
+    linkedin: "https://linkedin.com/in/yashpokharna",
+    instagram: "https://instagram.com/yashpokharna",
+    dribbble: "https://dribbble.com/yashpokharna",
+    behance: "https://behance.net/yashpokharna",
 };
 
 // Curved Loop Component
@@ -164,14 +165,20 @@ const Footer = () => {
     const socialIcons: Record<string, React.ComponentType<any>> = {
         github: Github,
         linkedin: Linkedin,
-        twitter: Twitter,
+        dribbble: Dribbble,
+        behance: (props: any) => (
+            <svg {...props} viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6.5 4.5h3.8c1.7 0 3.1 1.4 3.1 3.1 0 1-.5 1.9-1.2 2.4.9.5 1.5 1.5 1.5 2.6 0 1.7-1.4 3.1-3.1 3.1H6.5V4.5zm2 4.5h1.8c.6 0 1.1-.5 1.1-1.1s-.5-1.1-1.1-1.1H8.5V9zm0 4.7h1.8c.6 0 1.1-.5 1.1-1.1 0-.6-.5-1.1-1.1-1.1H8.5v2.2zM15.5 6h5v1.5h-5V6zm.5 5.5c0-2.2 1.8-4 4-4s4 1.8 4 4c0 .3 0 .5-.1.8h-6c.3 1.1 1.3 1.9 2.4 1.9.8 0 1.5-.4 2-.9l1.3 1c-.8.9-2 1.5-3.3 1.5-2.2 0-4-1.8-4-4zm6.2-.8c-.3-1-1.2-1.7-2.2-1.7s-1.9.7-2.2 1.7h4.4z"/>
+            </svg>
+        ),
         instagram: Instagram
     };
 
     const socialColors: Record<string, string> = {
         github: 'from-gray-700 to-gray-900',
         linkedin: 'from-blue-600 to-blue-800',
-        twitter: 'from-sky-400 to-blue-600',
+        dribbble: 'from-pink-500 to-pink-700',
+        behance: 'from-blue-500 to-blue-700',
         instagram: 'from-pink-500 via-purple-500 to-orange-500'
     };
 
@@ -242,13 +249,13 @@ const Footer = () => {
 
                     <h2 className="mb-6 text-6xl font-black leading-none text-white md:text-7xl lg:text-8xl">
                         <span className="inline-block transition-transform duration-300 cursor-default">
-                            Ready To 
+                            Ready
                         </span>
                         {' '}
                         <span 
                             className="inline-block font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400"
                         >
-                            Talk?
+                            to talk?
                         </span>
                     </h2>
 
@@ -258,7 +265,7 @@ const Footer = () => {
                 </div>
 
                 {/* Social Cards */}
-                <div className="grid max-w-3xl grid-cols-2 gap-4 mx-auto mb-16 md:grid-cols-4">
+                <div className="grid max-w-3xl grid-cols-2 gap-4 mx-auto mb-16 md:grid-cols-5">
                     {Object.entries(SOCIAL_LINKS).map(([platform, url]) => {
                         const Icon = socialIcons[platform];
                         const isHovered = hoveredSocial === platform;
@@ -297,46 +304,75 @@ const Footer = () => {
                     })}
                 </div>
 
-                {/* Contact Section - Unique Design */}
+                {/* Contact Section - Unique Animated Design */}
                 <div className="relative flex items-center justify-center mb-2">
                     <a
                         href={`mailto:${EMAIL}`}
                         className="relative group"
                     >
-                        <div className="relative px-8 py-6 overflow-hidden transition-all duration-500 border bg-slate-900/40 backdrop-blur-xl rounded-3xl border-slate-800/50 hover:border-purple-500/50 hover:bg-slate-900/60">
-                            {/* Animated gradient border effect */}
-                            <div className="absolute inset-0 transition-opacity duration-500 opacity-0 rounded-3xl group-hover:opacity-100 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-purple-500/20 blur-xl"></div>
+                        
+                        {/* <div className="absolute inset-0 transition-opacity duration-500 rounded-full opacity-0 group-hover:opacity-100">
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 blur-xl animate-spin-slow"></div>
+                        </div> */}
+                        
+                        <div className="relative flex items-center gap-6 px-12 py-8">
+                            {/* Floating mail icon with orbit effect */}
+                            <div className="relative">
+                                {/* Orbit ring */}
+                                <div className="absolute transition-all duration-500 border-2 rounded-full -inset-8 border-purple-500/20 group-hover:border-purple-500/40 group-hover:scale-110"></div>
+                                <div className="absolute transition-all duration-500 border rounded-full -inset-6 border-pink-500/20 group-hover:border-pink-500/40 group-hover:scale-105 group-hover:rotate-180" style={{ transitionDelay: '100ms' }}></div>
+                                
+                                {/* Icon container */}
+                                <div className="relative flex items-center justify-center w-16 h-16 transition-all duration-500 rounded-full shadow-2xl bg-gradient-to-br from-purple-500 to-pink-500 group-hover:scale-110 shadow-purple-500/50">
+                                    <Mail className="w-8 h-8 text-white transition-transform duration-500 group-hover:rotate-12" />
+                                    
+                                    {/* Pulse effect */}
+                                    <div className="absolute inset-0 rounded-full opacity-0 bg-purple-500/50 animate-ping group-hover:opacity-75"></div>
+                                </div>
+                            </div>
                             
-                            <div className="relative flex flex-col items-center gap-4 md:flex-row md:gap-6">
-                                {/* Icon with pulse effect */}
-                                <div className="relative">
-                                    <div className="absolute inset-0 rounded-full bg-purple-500/30 blur-md animate-pulse"></div>
-                                    <div className="relative flex items-center justify-center w-12 h-12 transition-transform duration-300 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 group-hover:scale-110">
-                                        <Mail className="w-6 h-6 text-white" />
+                            {/* Text with staggered letter animation */}
+                            <div className="overflow-hidden">
+                                <div className="space-y-2">
+                                    <p className="text-sm font-bold tracking-[0.3em] text-purple-300 uppercase opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+                                        Get In Touch
+                                    </p>
+                                    <div className="relative">
+                                        <p className="text-2xl font-black tracking-tight text-white transition-all duration-500 md:text-3xl group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:via-pink-400 group-hover:to-purple-400">
+                                            {EMAIL}
+                                        </p>
+                                        {/* Underline animation */}
+                                        <div className="absolute -bottom-1 left-0 h-0.5 w-0 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 group-hover:w-full transition-all duration-700"></div>
                                     </div>
                                 </div>
-                                
-                                {/* Text content */}
-                                <div className="text-center md:text-left">
-                                    <p className="mb-1 text-sm font-semibold tracking-wider text-purple-300 uppercase">Drop me a line</p>
-                                    <p className="text-lg font-bold text-white transition-all duration-300 md:text-xl group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400">
-                                        {EMAIL}
-                                    </p>
-                                </div>
-                                
-                                {/* Arrow */}
-                                <ArrowRight className="hidden w-5 h-5 text-purple-400 transition-transform duration-300 group-hover:translate-x-2 md:block" />
+                            </div>
+                            
+                            {/* Arrow with magnetic effect */}
+                            <div className="relative hidden md:block">
+                                <ArrowRight className="w-8 h-8 text-purple-400 transition-all duration-500 group-hover:translate-x-4 group-hover:text-pink-400 group-hover:scale-125" />
+                                {/* Trail effect */}
+                                <ArrowRight className="absolute top-0 left-0 w-8 h-8 transition-all duration-700 text-purple-400/30 group-hover:-translate-x-3 group-hover:opacity-0" />
                             </div>
                         </div>
                     </a>
                 </div>
 
+                <style jsx>{`
+                    @keyframes spin-slow {
+                        from { transform: rotate(0deg); }
+                        to { transform: rotate(360deg); }
+                    }
+                    .animate-spin-slow {
+                        animation: spin-slow 8s linear infinite;
+                    }
+                `}</style>
+
                 {/* Curved Loop Animation - Full Width */}
             </div>
             
-            <div className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mb-16 -mt-16 overflow-hidden py-8">
+            <div className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mb-16 -mt-8 overflow-hidden py-8">
                 <CurvedLoop 
-                    marqueeText="Let’s turn ideas into experiences ✦ "
+                    marqueeText="Let's Build Something Amazing ✦ "
                     speed={1.5}
                     curveAmount={350}
                     direction="left"
