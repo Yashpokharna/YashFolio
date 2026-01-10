@@ -1,7 +1,7 @@
-import { gsap, Linear, Back } from "gsap";
+import { gsap, Linear } from "gsap";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-import { Sparkles, Code2, Palette, Zap, Rocket, Person, UserCircle } from "lucide-react";
+import { Sparkles, Code2, Palette, Zap, UserCircle } from "lucide-react";
 import { MENULINKS} from "../../constants";
 
 gsap.registerPlugin(ScrollTrigger);

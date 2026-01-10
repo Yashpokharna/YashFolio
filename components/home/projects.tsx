@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ExternalLink, Sparkles, Terminal } from 'lucide-react';
+import { ExternalLink, Terminal } from 'lucide-react';
 import { PROJECTS } from '../../constants';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';

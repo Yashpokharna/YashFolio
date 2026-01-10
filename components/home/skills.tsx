@@ -3,7 +3,7 @@ import Image from "next/image";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-import { Sparkles, Wrench } from "lucide-react";
+import { Wrench } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 

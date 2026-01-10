@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo, useId, PointerEvent } from 'react';
-import { Mail, Github, Linkedin, Dribbble, Instagram, Sparkles, ArrowRight, Code2, Rocket, Send } from 'lucide-react';
+import { Mail, Github, Linkedin, Dribbble, Instagram, ArrowRight, Code2, Rocket, Send } from 'lucide-react';
 import { MENULINKS } from '../../constants';
 
 const EMAIL = "yashpokharna2002@gmail.com";
