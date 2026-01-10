@@ -3,11 +3,11 @@ import { Mail, Github, Linkedin, Dribbble, Instagram, Sparkles, ArrowRight, Code
 
 const EMAIL = "yashpokharna2002@gmail.com";
 const SOCIAL_LINKS = {
+    linkedin: "https://linkedin.com/in/yash-pokharna",
     github: "https://github.com/Yashpokharna",
-    linkedin: "https://linkedin.com/in/yashpokharna",
-    instagram: "https://instagram.com/yashpokharna",
-    dribbble: "https://dribbble.com/yashpokharna",
-    behance: "https://behance.net/yashpokharna",
+    instagram: "https://instagram.com/yash__pokharna",
+    dribbble: "https://dribbble.com/yash-pokharna",
+    behance: "https://www.behance.net/yashpokharna2002",
 };
 
 // Curved Loop Component
