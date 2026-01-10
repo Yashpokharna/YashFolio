@@ -254,7 +254,7 @@ const QuoteSection = () => {
           
           <div className="flex items-center justify-center gap-2 mt-8">
           <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" />
-          <p className="text-lg text-slate-500">
+          <p className="text-lg text-slate-500 text-center">
             Danger⚠️: Hovering may cause <span className="font-extrabold text-purple-400">"Emotional Damage".</span>
           </p>
           <div className="w-2 h-2 bg-pink-400 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
