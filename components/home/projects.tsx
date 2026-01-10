@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ExternalLink, Sparkles } from 'lucide-react';
+import { ExternalLink, Sparkles, Terminal } from 'lucide-react';
 import { PROJECTS } from '../../constants';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
@@ -210,7 +210,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ isDesktop }) => {
             ref={badgeRef}
             className="inline-flex items-center gap-2 px-5 py-2 mb-6 border rounded-full opacity-0 bg-white/5 border-white/10 backdrop-blur-xl"
           >
-            <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
+            <Terminal className="w-4 h-4 text-purple-400 animate-pulse" />
             <span className="text-sm font-bold tracking-widest text-purple-300 uppercase">
               My Works
             </span>

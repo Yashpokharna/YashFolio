@@ -1,7 +1,7 @@
 import { gsap, Linear, Back } from "gsap";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-import { Sparkles, Code2, Palette, Zap } from "lucide-react";
+import { Sparkles, Code2, Palette, Zap, Rocket, Person, UserCircle } from "lucide-react";
 import { MENULINKS} from "../../constants";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -257,7 +257,7 @@ const AboutSection = () => {
             ref={badgeRef}
             className="inline-flex items-center gap-2 px-5 py-2 mb-6 transition-shadow duration-300 rounded-full shadow-xl opacity-0 bg-white/5 backdrop-blur-xl hover:shadow-purple-500/30"
           >
-            <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
+            <UserCircle className="w-4 h-4 text-purple-400 animate-pulse" />
             <span className="text-sm font-bold tracking-widest text-purple-300 uppercase">About Me</span>
           </div>
           
