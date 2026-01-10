@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo, useId, PointerEvent } from 'react';
 import { Mail, Github, Linkedin, Dribbble, Instagram, Sparkles, ArrowRight, Code2, Rocket } from 'lucide-react';
+import { MENULINKS } from '../../constants';
 
 const EMAIL = "yashpokharna2002@gmail.com";
 const SOCIAL_LINKS = {
@@ -161,6 +162,7 @@ const CurvedLoop: React.FC<CurvedLoopProps> = ({
 const Footer = () => {
     const [hoveredSocial, setHoveredSocial] = useState<string | null>(null);
     const currentYear = new Date().getFullYear();
+    const { ref: contactSectionRef } = MENULINKS.find(link => link.name === "Contact") || MENULINKS[4];
 
     const socialIcons: Record<string, React.ComponentType<any>> = {
         github: Github,
@@ -183,7 +185,7 @@ const Footer = () => {
     };
 
     return (
-        <footer className="relative w-full py-20 overflow-hidden select-none bg-slate-950">
+        <footer className="relative w-full py-20 overflow-hidden select-none bg-slate-950" id={contactSectionRef}>
             
             {/* Background Pattern */}
             <div 

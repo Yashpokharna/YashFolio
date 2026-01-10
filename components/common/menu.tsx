@@ -26,7 +26,14 @@ const Menu = ({
                 <a
                   className="relative inline text-5xl font-bold duration-300 link hover:no-underline"
                   href={`#${el.ref}`}
-                  onClick={setmenuVisible.bind(null, false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const element = document.getElementById(el.ref);
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                    setmenuVisible(false);
+                  }}
                 >
                   {el.name}
                 </a>
