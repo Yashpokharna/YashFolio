@@ -480,7 +480,7 @@ const HeroSection = React.memo(() => {
             { key: 'github', url: SOCIAL_LINKS.github },
             { key: 'linkedin', url: SOCIAL_LINKS.linkedin },
             { key: 'instagram', url: SOCIAL_LINKS.instagram },
-            { key: 'dribbble', url: 'https://dribbble.com/yashpokharna' },
+            // { key: 'dribbble', url: 'https://dribbble.com/yashpokharna' },
             { key: 'behance', url: 'https://behance.net/yashpokharna' },
           ].map(({ key, url }) => {
             const socialColors: Record<string, string> = {
