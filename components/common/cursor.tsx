@@ -1,7 +1,7 @@
 import styles from "./Cursor.module.scss";
 import { MutableRefObject, useEffect, useRef } from "react";
 import { gsap, Linear } from "gsap";
-import { isSmallScreen } from "pages"; // ✅ keep if this util lives in pages/index.tsx
+import { isSmallScreen } from "pages"; //keep if this util lives in pages/index.tsx
 
 // Define local prop type instead of importing from "pages"
 interface CursorProps {
