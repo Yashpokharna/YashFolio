@@ -789,7 +789,7 @@ const HeroSection = React.memo(() => {
             color: "rgba(255,255,255,0.85)",
           }}
         >
-          {["The gap between", "idea", "and product?", "That's me."].map(
+          {["The Gap Between", "Idea", "and Product?", "That's Me."].map(
             (word, i) => (
               <React.Fragment key={word}>
                 <span
