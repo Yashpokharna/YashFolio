@@ -126,6 +126,15 @@ const HeroSection = React.memo(() => {
   // Glitch
   const nameRef = useRef<HTMLSpanElement | null>(null);
 
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
   // ── Particle system ────────────────────────────────────────────
   const initParticles = useCallback(() => {
     const canvas = canvasRef.current;
@@ -554,6 +563,7 @@ const HeroSection = React.memo(() => {
       ))}
 
       {/* ── HUD Left ── */}
+      {!isMobile && (
       <div
         className="hero-hud"
         style={{
@@ -615,8 +625,10 @@ const HeroSection = React.memo(() => {
           </div>
         ))}
       </div>
+      )}
 
       {/* ── HUD Right ── */}
+      {!isMobile && (
       <div
         className="hero-hud"
         style={{
@@ -659,6 +671,7 @@ const HeroSection = React.memo(() => {
           </span>
         ))}
       </div>
+      )}
 
       {/* ── Main content ── */}
       <div
@@ -668,7 +681,7 @@ const HeroSection = React.memo(() => {
           textAlign: "center",
           width: "100%",
           maxWidth: 860,
-          padding: "0 140px",
+          padding: isMobile ? "0 24px" : "0 140px",
         }}
       >
         {/* Boot text */}
@@ -789,7 +802,7 @@ const HeroSection = React.memo(() => {
             color: "rgba(255,255,255,0.85)",
           }}
         >
-          {["The Gap Between", "Idea", "and Product?", "That's Me."].map(
+          {["The gap between", "idea", "and product?", "That's me."].map(
             (word, i) => (
               <React.Fragment key={word}>
                 <span
@@ -932,7 +945,7 @@ const HeroSection = React.memo(() => {
           zIndex: 20,
           display: "flex",
           alignItems: "center",
-          gap: 16,
+          gap: isMobile ? 8 : 16,
           opacity: 0,
         }}
       >
@@ -948,7 +961,7 @@ const HeroSection = React.memo(() => {
             target="_blank"
             rel="noreferrer"
             title={title}
-            style={{ position: "relative", width: 96, display: "flex", textDecoration: "none", opacity: 0 }}
+            style={{ position: "relative", width: isMobile ? 68 : 96, display: "flex", textDecoration: "none", opacity: 0 }}
             onMouseEnter={(e) => {
               const el = e.currentTarget as HTMLElement;
               const card = el.querySelector('[data-card]') as HTMLElement;
