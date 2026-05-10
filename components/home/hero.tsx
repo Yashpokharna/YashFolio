@@ -1,355 +1,418 @@
 "use client";
 
-import React, { MutableRefObject, useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import React, {
+  MutableRefObject,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import { gsap } from "gsap";
-import {
-  ArrowRight,
-  Download,
-  Mail,
-  Terminal,
-  Github,
-  Linkedin,
-  Dribbble,
-  Instagram,
-} from "lucide-react";
-import { EMAIL, MENULINKS, SOCIAL_LINKS, TYPED_STRINGS } from "../../constants";
+import { EMAIL, MENULINKS, SOCIAL_LINKS } from "../../constants";
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  alpha: number;
+  color: string;
+  life: number;
+  decay: number;
+}
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+const ROLES = [
+  "Frontend Engineer",
+  "Full Stack Dev",
+  "UI / UX Craftsman",
+  "Mobile App Developer",
+  "Creative Developer",
+];
+
+const BOOT_MESSAGES = [
+  "sys.init() → loading portfolio...",
+  "env: NODE_ENV=production",
+  "status: ready to ship 🚀",
+];
+
+const STACK = [
+  { label: "React", color: "#61dafb" },
+  { label: "Next.js", color: "#ffffff" },
+  { label: "Tailwind", color: "#38bdf8" },
+  { label: "TypeScript", color: "#3178c6" },
+  { label: "Node.js", color: "#68a063" },
+  { label: "Figma", color: "#a855f7" },
+  { label: "GSAP", color: "#88ce02" },
+  { label: "Flutter", color: "#54c5f8" },
+];
+
+const GLITCH_CHARS = "!@#$%^&*<>?/\\|{}[]~";
+
+const HUD_BARS = [
+  { label: "Experience", value: "1.5 years", width: "45%" },
+  { label: "AI / LLM", value: "API-integrated", width: "60%" },
+  { label: "Code", value: "Type-safe", width: "80%" },
+];
+
+const HUD_TAGS = [
+  { label: "Frontend Dev", active: true },
+  { label: "Full Stack", active: true },
+  { label: "UI / UX", active: true },
+  { label: "Flutter / Mobile", active: true },
+  { label: "AI Integrated", active: false },
+];
+
+// ─── Particle helpers ─────────────────────────────────────────────────────────
+function createParticle(W: number, H: number, init = false): Particle {
+  const colors = ["139,92,246", "139,92,246", "236,72,153", "255,255,255"];
+  return {
+    x: Math.random() * W,
+    y: init ? Math.random() * H : Math.random() < 0.5 ? -5 : H + 5,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: (Math.random() - 0.5) * 0.3,
+    size: Math.random() * 1.5 + 0.3,
+    alpha: Math.random() * 0.4 + 0.1,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    life: 1,
+    decay: Math.random() * 0.001 + 0.0002,
+  };
+}
+
+// ─── SVG Social Icons ─────────────────────────────────────────────────────────
+const GitHubIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+  </svg>
+);
+
+const LinkedInIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+  </svg>
+);
+
+const InstagramIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+  </svg>
+);
+
+const BehanceIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M6.5 4.5h3.8c1.7 0 3.1 1.4 3.1 3.1 0 1-.5 1.9-1.2 2.4.9.5 1.5 1.5 1.5 2.6 0 1.7-1.4 3.1-3.1 3.1H6.5V4.5zm2 4.5h1.8c.6 0 1.1-.5 1.1-1.1s-.5-1.1-1.1-1.1H8.5V9zm0 4.7h1.8c.6 0 1.1-.5 1.1-1.1 0-.6-.5-1.1-1.1-1.1H8.5v2.2zM15.5 6h5v1.5h-5V6zm.5 5.5c0-2.2 1.8-4 4-4s4 1.8 4 4c0 .3 0 .5-.1.8h-6c.3 1.1 1.3 1.9 2.4 1.9.8 0 1.5-.4 2-.9l1.3 1c-.8.9-2 1.5-3.3 1.5-2.2 0-4-1.8-4-4zm6.2-.8c-.3-1-1.2-1.7-2.2-1.7s-1.9.7-2.2 1.7h4.4z" />
+  </svg>
+);
+
+// ─── Component ────────────────────────────────────────────────────────────────
 const HeroSection = React.memo(() => {
-  const targetSection: MutableRefObject<HTMLDivElement | null> = useRef(null);
-  const headingRef = useRef<HTMLHeadingElement | null>(null);
-  const introRef = useRef<HTMLDivElement | null>(null);
-  const [currentStringIndex, setCurrentStringIndex] = useState(0);
-  const textContainerRef = useRef<HTMLDivElement | null>(null);
+  const sectionRef: MutableRefObject<HTMLElement | null> = useRef(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const mouseRef = useRef({ x: -9999, y: -9999 });
+  const particlesRef = useRef<Particle[]>([]);
+  const rafRef = useRef<number>(0);
+  const barRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const initTextAnimation = () => {
-    if (!textContainerRef.current) return;
+  // Role cycling
+  const [roleIndex, setRoleIndex] = useState(0);
+  const [roleVisible, setRoleVisible] = useState(true);
 
-    const animateText = () => {
-      const container = textContainerRef.current;
-      if (!container) return;
+  // Boot text
+  const [bootText, setBootText] = useState("");
+  const [bootDone, setBootDone] = useState(false);
 
-      // Get current text
-      const currentText = TYPED_STRINGS[currentStringIndex];
-      
-      // Split into words
-      const words = currentText.split(" ");
-      
-      // Clear container
-      container.innerHTML = "";
-      
-      // Create word spans
-      words.forEach((word, wordIndex) => {
-        const wordSpan = document.createElement("span");
-        wordSpan.className = "inline-block mx-1";
-        
-        // Split word into letters
-        word.split("").forEach((letter, letterIndex) => {
-          const letterSpan = document.createElement("span");
-          letterSpan.textContent = letter;
-          letterSpan.className = "inline-block";
-          letterSpan.style.opacity = "0";
-          wordSpan.appendChild(letterSpan);
-        });
-        
-        container.appendChild(wordSpan);
-      });
+  // Glitch
+  const nameRef = useRef<HTMLSpanElement | null>(null);
 
-      // Animate letters in
-      const letters = container.querySelectorAll("span span");
-      gsap.fromTo(
-        letters,
-        {
-          opacity: 0,
-          y: 20,
-          rotationX: -90,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          rotationX: 0,
-          duration: 0.4,
-          ease: "back.out(1.5)",
-          stagger: 0.03,
-          delay: 0.3,
+  // ── Particle system ────────────────────────────────────────────
+  const initParticles = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const W = canvas.offsetWidth;
+    const H = canvas.offsetHeight;
+    particlesRef.current = Array.from({ length: 120 }, () =>
+      createParticle(W, H, true)
+    );
+  }, []);
+
+  const animateParticles = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const W = canvas.width;
+    const H = canvas.height;
+    const mx = mouseRef.current.x;
+    const my = mouseRef.current.y;
+
+    ctx.clearRect(0, 0, W, H);
+
+    const pts = particlesRef.current;
+
+    // Connection lines
+    for (let i = 0; i < pts.length; i++) {
+      for (let j = i + 1; j < pts.length; j++) {
+        const dx = pts[i].x - pts[j].x;
+        const dy = pts[i].y - pts[j].y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 80) {
+          ctx.save();
+          ctx.globalAlpha = (1 - d / 80) * 0.08;
+          ctx.strokeStyle = "#8b5cf6";
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x, pts[i].y);
+          ctx.lineTo(pts[j].x, pts[j].y);
+          ctx.stroke();
+          ctx.restore();
         }
-      );
+      }
+    }
 
-      // Animate out after delay
-      setTimeout(() => {
-        gsap.to(letters, {
-          opacity: 0,
-          y: -20,
-          rotationX: 90,
-          duration: 0.3,
-          ease: "power2.in",
-          stagger: 0.02,
-          onComplete: () => {
-            setCurrentStringIndex((prev) => (prev + 1) % TYPED_STRINGS.length);
-          },
-        });
-      }, 3000);
+    // Particles
+    pts.forEach((p) => {
+      const dx = p.x - mx;
+      const dy = p.y - my;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 120) {
+        const force = ((120 - dist) / 120) * 0.4;
+        p.vx += (dx / dist) * force * 0.1;
+        p.vy += (dy / dist) * force * 0.1;
+      }
+      p.vx *= 0.98;
+      p.vy *= 0.98;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= p.decay;
+
+      if (
+        p.life <= 0 ||
+        p.x < -10 ||
+        p.x > W + 10 ||
+        p.y < -10 ||
+        p.y > H + 10
+      ) {
+        Object.assign(p, createParticle(W, H, false));
+      }
+
+      ctx.save();
+      ctx.globalAlpha = p.alpha * p.life;
+      ctx.fillStyle = `rgb(${p.color})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+
+    rafRef.current = requestAnimationFrame(animateParticles);
+  }, []);
+
+  // ── Name glitch handler ────────────────────────────────────────
+  const handleNameGlitch = useCallback(() => {
+    const el = nameRef.current;
+    if (!el) return;
+    const chars = Array.from(el.querySelectorAll<HTMLSpanElement>(".hero-char"));
+    chars.forEach((c, i) => {
+      if (c.dataset.orig === " ") return;
+      const orig = c.dataset.orig ?? c.textContent ?? "";
+      let count = 0;
+      const interval = setInterval(() => {
+        c.textContent =
+          GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
+        c.style.color =
+          Math.random() < 0.5 ? "#a78bfa" : "#f472b6";
+        count++;
+        if (count > 6) {
+          clearInterval(interval);
+          c.textContent = orig;
+          c.style.color = "";
+        }
+      }, 40 + i * 15);
+    });
+  }, []);
+
+  // ── Canvas setup ───────────────────────────────────────────────
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+    initParticles();
+    rafRef.current = requestAnimationFrame(animateParticles);
+
+    const onMouseMove = (e: MouseEvent) => {
+      mouseRef.current = { x: e.clientX, y: e.clientY };
+    };
+    window.addEventListener("mousemove", onMouseMove);
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", onMouseMove);
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, [initParticles, animateParticles]);
+
+  // ── Boot text typewriter ───────────────────────────────────────
+  useEffect(() => {
+    let msgIdx = 0;
+    let charIdx = 0;
+    let timer: ReturnType<typeof setTimeout>;
+
+    const type = () => {
+      if (msgIdx >= BOOT_MESSAGES.length) {
+        setBootText(BOOT_MESSAGES[BOOT_MESSAGES.length - 1]);
+        setBootDone(true);
+        return;
+      }
+      const msg = BOOT_MESSAGES[msgIdx];
+      if (charIdx <= msg.length) {
+        setBootText(msg.substring(0, charIdx));
+        charIdx++;
+        timer = setTimeout(type, 40 + Math.random() * 20);
+      } else {
+        timer = setTimeout(() => {
+          setBootText("");
+          charIdx = 0;
+          msgIdx++;
+          type();
+        }, 700);
+      }
     };
 
-    animateText();
-  };
+    const startTimer = setTimeout(type, 500);
+    return () => {
+      clearTimeout(startTimer);
+      clearTimeout(timer);
+    };
+  }, []);
 
+  // ── Role cycling ───────────────────────────────────────────────
   useEffect(() => {
-    initTextAnimation();
-  }, [currentStringIndex]);
+    const interval = setInterval(() => {
+      setRoleVisible(false);
+      setTimeout(() => {
+        setRoleIndex((prev) => (prev + 1) % ROLES.length);
+        setRoleVisible(true);
+      }, 400);
+    }, 2800);
+    return () => clearInterval(interval);
+  }, []);
 
-  const initRevealAnimation = () => {
-    if (!targetSection.current) return;
+  // ── Initial glitch on load ───────────────────────────────────
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      handleNameGlitch();
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [handleNameGlitch]);
 
-    const tl = gsap.timeline();
+  // ── GSAP entrance animations ───────────────────────────────────
+  useEffect(() => {
+    if (typeof window === "undefined") return;
 
-    // Animate "Hello, I am Yash" section word by word
-    if (introRef.current) {
-      const introWords = introRef.current.querySelectorAll(".intro-word");
-      
-      introWords.forEach((word, index) => {
-        const introEffects = [
-          // "Hello," - Fade and slide from top
-          { 
-            y: -60, 
-            opacity: 0, 
-            rotation: -15,
-            duration: 1.2, 
-            ease: "power3.out" 
-          },
-          // "I" - Scale up with bounce
-          { 
-            scale: 0, 
-            opacity: 0, 
-            duration: 1, 
-            ease: "back.out(2)" 
-          },
-          // "am" - Slide from left with rotation
-          { 
-            x: -80, 
-            opacity: 0,
-            rotation: 20, 
-            duration: 1.1, 
-            ease: "power2.out" 
-          },
-          // "Yash" - 3D flip
-          { 
-            rotationY: 180, 
-            opacity: 0, 
-            transformOrigin: "50% 50%",
-            duration: 1.3, 
-            ease: "power3.out" 
-          }
-        ];
-        
-        gsap.fromTo(
-          word,
-          introEffects[index] || introEffects[0],
-          {
-            y: 0,
-            x: 0,
-            opacity: 1,
-            scale: 1,
-            rotation: 0,
-            rotationY: 0,
-            delay: 0.2 + (index * 0.25),
-            duration: 1,
-            ease: "power2.out"
-          }
-        );
-      });
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ delay: 0.3 });
 
-      // Animate the lines
-      const lines = introRef.current.querySelectorAll(".intro-line");
-      gsap.fromTo(
-        lines,
-        { scaleX: 0, opacity: 0 },
-        {
-          scaleX: 1,
-          opacity: 1,
-          duration: 1.3,
-          ease: "power2.out",
-          delay: 0.15,
-          stagger: 0.25
-        }
-      );
-    }
-
-    // Animate main heading word by word with unique effects
-    if (headingRef.current) {
-      const words = headingRef.current.querySelectorAll(".word");
-      
-      words.forEach((word, index) => {
-        // Special handling for "experiences" - letter by letter
-        if (index === 4) {
-          const letters = word.querySelectorAll(".letter");
-          gsap.fromTo(
-            letters,
-            {
-              opacity: 0,
-              scale: 0,
-              y: -50,
-              rotation: 180
-            },
-            {
-              opacity: 1,
-              scale: 1,
-              y: 0,
-              rotation: 0,
-              duration: 0.6,
-              ease: "back.out(2)",
-              stagger: 0.06,
-              delay: 1.5 + (index * 0.28)
-            }
-          );
-        } else {
-          const effects = [
-            // Word 1: "Crafting" - Slide up with fade and slight rotation
-            { 
-              y: 80, 
-              opacity: 0,
-              rotation: -10, 
-              duration: 1.3, 
-              ease: "power3.out" 
-            },
-            // Word 2: "elegant," - 3D Rotate with perspective
-            { 
-              rotationX: -90, 
-              opacity: 0, 
-              transformOrigin: "50% 50%",
-              duration: 1.2, 
-              ease: "back.out(1.5)" 
-            },
-            // Word 3: "performant" - Scale and blur
-            { 
-              scale: 0.3, 
-              opacity: 0,
-              filter: "blur(15px)", 
-              duration: 1.4, 
-              ease: "elastic.out(1, 0.6)" 
-            },
-            // Word 4: "web" - Slide from right with rotation
-            { 
-              x: 120, 
-              opacity: 0,
-              rotation: 25, 
-              duration: 1.2, 
-              ease: "power2.out" 
-            }
-          ];
-          
-          gsap.fromTo(
-            word,
-            effects[index] || effects[0],
-            {
-              y: 0,
-              x: 0,
-              opacity: 1,
-              scale: 1,
-              rotation: 0,
-              rotationX: 0,
-              filter: "blur(0px)",
-              delay: 1.5 + (index * 0.28),
-              duration: 1.2,
-              ease: "power2.out"
-            }
-          );
-        }
-      });
-    }
-
-    // Animate other elements with faster timing
-    const terminalSection = targetSection.current.querySelector(".terminal-section");
-    if (terminalSection) {
-      gsap.fromTo(
-        terminalSection,
-        { 
-          y: 50, 
-          opacity: 0,
-          scale: 0.9 
-        },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 1.1,
-          ease: "power2.out",
-          delay: 2.9
-        }
-      );
-    }
-
-    const buttonsSection = targetSection.current.querySelector(".buttons-section");
-    if (buttonsSection) {
-      const buttons = buttonsSection.querySelectorAll("a");
-      gsap.fromTo(
-        buttons,
-        { 
-          y: 40, 
-          opacity: 0,
-          scale: 0.8
-        },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 1,
-          ease: "back.out(1.5)",
-          delay: 3.5,
-          stagger: 0.2
-        }
-      );
-    }
-
-    const socialSection = targetSection.current.querySelector(".social-section");
-    if (socialSection) {
-      const socials = socialSection.querySelectorAll("a");
-      gsap.fromTo(
-        socials,
-        { 
-          scale: 0, 
-          opacity: 0,
-          rotation: -180
-        },
-        {
-          scale: 1,
-          opacity: 1,
-          rotation: 0,
-          duration: 0.8,
-          ease: "elastic.out(1, 0.5)",
-          delay: 4,
-          stagger: 0.12
-        }
-      );
-    }
-
-    // Animate floating skill icons one by one
-    const floatingIcons = targetSection.current.querySelectorAll(".floating-icon");
-    gsap.fromTo(
-      floatingIcons,
-      {
-        scale: 0,
-        opacity: 0,
-        y: -100,
-        rotation: -360
-      },
-      {
-        scale: 1,
+      // Corners
+      tl.to(".hero-corner", {
         opacity: 1,
-        y: 0,
-        rotation: 0,
-        duration: 1.2,
-        ease: "elastic.out(1, 0.6)",
-        delay: 4.5,
-        stagger: 0.2
-      }
-    );
-  };
+        duration: 0.6,
+        stagger: 0.1,
+        ease: "power2.out",
+      });
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setTimeout(() => initRevealAnimation(), 300);
-    }
+      // Name block
+      tl.fromTo(
+        ".hero-name-block",
+        { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.9, ease: "power3.out" },
+        "-=0.3"
+      );
+
+      // Role display
+      tl.fromTo(
+        ".hero-role-display",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.6, ease: "power2.out" },
+        "-=0.3"
+      );
+
+      // Tagline words
+      tl.fromTo(
+        ".hero-tword",
+        { y: 50, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.7,
+          ease: "power3.out",
+          stagger: 0.12,
+        },
+        "-=0.2"
+      );
+
+      // CTA buttons
+      tl.fromTo(
+        ".hero-cta-btn",
+        { y: 20, opacity: 0, scale: 0.95 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.6,
+          ease: "back.out(1.5)",
+          stagger: 0.12,
+        },
+        "-=0.2"
+      );
+
+      // HUD panels
+      tl.fromTo(
+        ".hero-hud",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.8, ease: "power2.out" },
+        "-=0.4"
+      );
+
+      // Bottom bar
+      tl.fromTo(
+        ".hero-bottom-bar",
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+        "-=0.4"
+      );
+
+      // Scroll indicator
+      tl.fromTo(
+        ".hero-scroll-indicator",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.6, ease: "power2.out" },
+        "-=0.3"
+      );
+
+      // HUD bars animate after everything else
+      tl.call(() => {
+        barRefs.current.forEach((bar, i) => {
+          if (!bar) return;
+          const widths = ["45%", "60%", "80%"];
+          gsap.to(bar, {
+            width: widths[i],
+            duration: 1.4,
+            ease: "power2.out",
+            delay: i * 0.15,
+          });
+        });
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
   }, []);
 
   const { ref: heroSectionRef } = MENULINKS[0];
@@ -357,250 +420,650 @@ const HeroSection = React.memo(() => {
   return (
     <section
       id={heroSectionRef}
-      ref={targetSection}
-      className="relative flex flex-col items-center justify-center w-full min-h-screen px-6 pb-24 overflow-hidden text-center select-none pt-28 bg-slate-950"
+      ref={sectionRef as MutableRefObject<HTMLElement>}
+      className="relative w-full overflow-hidden"
+      style={{
+        minHeight: "100vh",
+        background: "#111827",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "'Courier New', monospace",
+      }}
     >
-      {/* Background layers */}
-      <div className="absolute inset-0 bg-gradient-to-b from-purple-950/20 via-slate-950 to-slate-950" />
-      <div className="absolute rounded-full top-1/4 right-1/4 w-96 h-96 bg-purple-500/10 blur-3xl animate-pulse" />
-      <div
-        className="absolute rounded-full bottom-1/3 left-1/4 w-96 h-96 bg-pink-500/10 blur-3xl animate-pulse"
-        style={{ animationDelay: "1s", animationDuration: "4s" }}
+      {/* ── Particle canvas ── */}
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: 1,
+        }}
       />
+
+      {/* ── Scanlines ── */}
       <div
-        className="absolute rounded-full top-1/2 right-1/3 w-72 h-72 bg-blue-500/10 blur-3xl animate-pulse"
-        style={{ animationDelay: "2s", animationDuration: "5s" }}
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 2,
+          backgroundImage:
+            "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px)",
+          pointerEvents: "none",
+        }}
       />
-      <div className="absolute inset-0 overflow-hidden opacity-20">
-        <div className="absolute w-px h-40 top-20 left-20 bg-gradient-to-b from-transparent via-purple-500 to-transparent animate-float" />
+
+      {/* ── Vignette ── */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 3,
+          background:
+            "radial-gradient(ellipse at center, transparent 40%, rgba(17, 24, 39, 0.85) 100%)",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* ── Status bar ── */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 2,
+          zIndex: 20,
+          background: "rgba(255,255,255,0.03)",
+          overflow: "hidden",
+        }}
+      >
         <div
-          className="absolute w-px h-32 top-40 right-32 bg-gradient-to-b from-transparent via-pink-500 to-transparent animate-float"
-          style={{ animationDelay: "1s" }}
-        />
-        <div
-          className="absolute w-px bottom-32 left-1/3 h-36 bg-gradient-to-b from-transparent via-blue-500 to-transparent animate-float"
-          style={{ animationDelay: "2s" }}
-        />
-        <div className="absolute w-40 h-px top-1/3 right-1/4 bg-gradient-to-r from-transparent via-purple-500 to-transparent animate-float-horizontal" />
-        <div
-          className="absolute w-32 h-px bottom-1/4 left-1/4 bg-gradient-to-r from-transparent via-pink-500 to-transparent animate-float-horizontal"
-          style={{ animationDelay: "1.5s" }}
+          style={{
+            height: "100%",
+            background:
+              "linear-gradient(90deg, #7c3aed, #ec4899, #7c3aed)",
+            backgroundSize: "200% 100%",
+            animation: "heroStatusLoad 2s ease 0.5s forwards, heroShimmer 3s linear 2.5s infinite",
+            width: 0,
+          }}
         />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 max-w-4xl space-y-12">
-        {/* Enhanced "Hello, I am Yash" section */}
-        <div 
-          ref={introRef}
-          className="flex items-center justify-center gap-5 text-slate-300"
-          style={{ perspective: "1200px" }}
+      {/* ── Corner brackets ── */}
+      {(["tl", "tr", "bl", "br"] as const).map((pos) => (
+        <div
+          key={pos}
+          className="hero-corner"
+          style={{
+            position: "absolute",
+            width: 40,
+            height: 40,
+            zIndex: 20,
+            opacity: 0,
+            ...(pos === "tl" ? { top: 24, left: 24 } : {}),
+            ...(pos === "tr" ? { top: 24, right: 24, transform: "scaleX(-1)" } : {}),
+            ...(pos === "bl" ? { bottom: 24, left: 24, transform: "scaleY(-1)" } : {}),
+            ...(pos === "br" ? { bottom: 24, right: 24, transform: "scale(-1,-1)" } : {}),
+          }}
         >
-          <span className="intro-line h-0.5 w-16 bg-gradient-to-r from-transparent via-purple-500 to-purple-500 rounded opacity-0" />
-          <div className="flex items-center gap-3 text-3xl font-bold tracking-wide sm:text-4xl md:text-5xl">
-            <span className="inline-block text-transparent opacity-0 intro-word bg-gradient-to-r from-purple-400 via-pink-400 to-purple-500 bg-clip-text">
-              Hello,
+          <svg viewBox="0 0 40 40" fill="none" width="100%" height="100%">
+            <path
+              d="M2 20 L2 2 L20 2"
+              stroke={pos === "bl" || pos === "br" ? "rgba(236,72,153,0.4)" : "rgba(139,92,246,0.5)"}
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+      ))}
+
+      {/* ── HUD Left ── */}
+      <div
+        className="hero-hud"
+        style={{
+          position: "absolute",
+          left: 32,
+          top: "50%",
+          transform: "translateY(-50%)",
+          zIndex: 20,
+          display: "flex",
+          flexDirection: "column",
+          gap: 24,
+          opacity: 0,
+        }}
+      >
+        {HUD_BARS.map((item, i) => (
+          <div
+            key={item.label}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 4,
+              borderLeft: "1px solid rgba(139,92,246,0.3)",
+              paddingLeft: 12,
+            }}
+          >
+            <span
+              style={{
+                fontSize: 9,
+                letterSpacing: "0.2em",
+                color: "rgba(139,92,246,0.5)",
+                textTransform: "uppercase",
+              }}
+            >
+              {item.label}
             </span>
-            <span className="inline-block opacity-0 intro-word text-slate-200">
-              I
+            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>
+              {item.value}
             </span>
-            <span className="inline-block opacity-0 intro-word text-slate-200">
-              am
-            </span>
-            <span className="inline-block font-extrabold text-transparent opacity-0 intro-word bg-gradient-to-r from-pink-400 via-purple-400 to-pink-500 bg-clip-text">
-              Yash
+            <div
+              style={{
+                width: 60,
+                height: 2,
+                background: "rgba(255,255,255,0.08)",
+                borderRadius: 2,
+                marginTop: 4,
+                overflow: "hidden",
+              }}
+            >
+              <div
+                ref={(el) => { barRefs.current[i] = el; }}
+                style={{
+                  height: "100%",
+                  background: "linear-gradient(90deg, #7c3aed, #ec4899)",
+                  borderRadius: 2,
+                  width: 0,
+                }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── HUD Right ── */}
+      <div
+        className="hero-hud"
+        style={{
+          position: "absolute",
+          right: 32,
+          top: "50%",
+          transform: "translateY(-50%)",
+          zIndex: 20,
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+          alignItems: "flex-end",
+          opacity: 0,
+        }}
+      >
+        {HUD_TAGS.map((tag) => (
+          <span
+            key={tag.label}
+            style={{
+              fontSize: 9,
+              letterSpacing: "0.15em",
+              color: tag.active ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.2)",
+              textTransform: "uppercase",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            {tag.label}
+            <span
+              style={{
+                display: "inline-block",
+                width: 4,
+                height: 4,
+                borderRadius: "50%",
+                background: tag.active ? "#ec4899" : "#7c3aed",
+                boxShadow: tag.active ? "0 0 8px #ec4899" : "0 0 6px #7c3aed",
+              }}
+            />
+          </span>
+        ))}
+      </div>
+
+      {/* ── Main content ── */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 10,
+          textAlign: "center",
+          width: "100%",
+          maxWidth: 860,
+          padding: "0 140px",
+        }}
+      >
+        {/* Boot text */}
+        <div
+          style={{
+            fontSize: 10,
+            letterSpacing: "0.2em",
+            color: "rgba(124,58,237,0.7)",
+            textTransform: "uppercase",
+            marginBottom: "2rem",
+            height: 14,
+            overflow: "hidden",
+            fontFamily: "'Courier New', monospace",
+          }}
+        >
+          {bootText}
+          {!bootDone && (
+            <span
+              style={{
+                display: "inline-block",
+                width: 6,
+                height: 11,
+                background: "#7c3aed",
+                marginLeft: 2,
+                verticalAlign: "bottom",
+                animation: "heroBlink 1s step-end infinite",
+              }}
+            />
+          )}
+        </div>
+
+        {/* Name */}
+        <div className="hero-name-block" style={{ marginBottom: "1rem", opacity: 0 }}>
+          {/* Glitch name */}
+          <span
+            ref={nameRef}
+            onMouseEnter={handleNameGlitch}
+            style={{
+              fontSize: "clamp(42px, 8vw, 88px)",
+              fontWeight: 800,
+              letterSpacing: "-0.05em",
+              lineHeight: 1,
+              fontFamily: "'Raleway', sans-serif",
+              color: "#fff",
+              display: "inline-block",
+              cursor: "default",
+              userSelect: "none",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {"Yash Pokharna".split("").map((ch, i) => (
+              <span
+                key={i}
+                className="hero-char"
+                data-orig={ch}
+                style={{
+                  display: "inline-block",
+                  transition: "color 0.05s",
+                  color: ch === " " ? "transparent" : undefined,
+                }}
+              >
+                {ch}
+              </span>
+            ))}
+          </span>
+        </div>
+
+        {/* Role cycling */}
+        <div
+          className="hero-role-display"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 12,
+            margin: "1.2rem 0 1.5rem",
+            opacity: 0,
+            minHeight: 28,
+          }}
+        >
+          <span style={{ fontSize: 12, letterSpacing: "0.15em", color: "rgba(255,255,255,0.2)", textTransform: "uppercase" }}>
+            ./
+          </span>
+          <div style={{ overflow: "hidden", height: 24, minWidth: 220, position: "relative" }}>
+            <span
+              style={{
+                fontSize: 14,
+                fontWeight: 600,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                background: "linear-gradient(90deg, #a78bfa, #f472b6)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                display: "block",
+                transform: roleVisible ? "translateY(0)" : "translateY(-100%)",
+                transition: "transform 0.5s cubic-bezier(0.16,1,0.3,1)",
+                fontFamily: "'Courier New', monospace",
+              }}
+            >
+              {ROLES[roleIndex]}
             </span>
           </div>
-          <span className="intro-line h-0.5 w-16 bg-gradient-to-l from-transparent via-pink-500 to-pink-500 rounded opacity-0" />
+          <span style={{ fontSize: 12, letterSpacing: "0.15em", color: "rgba(255,255,255,0.2)", textTransform: "uppercase" }}>
+            --
+          </span>
         </div>
 
-        <h1 
-          ref={headingRef}
-          className="text-5xl font-extrabold leading-tight tracking-tight text-white sm:text-6xl md:text-7xl lg:text-8xl"
-          style={{ perspective: "1000px" }}
+        {/* Tagline */}
+        <h1
+          style={{
+            fontSize: "clamp(28px, 5vw, 54px)",
+            fontWeight: 700,
+            lineHeight: 1.1,
+            letterSpacing: "-0.03em",
+            marginBottom: "2rem",
+            fontFamily: "'Raleway', sans-serif",
+            color: "rgba(255,255,255,0.85)",
+          }}
         >
-          <span className="inline-block opacity-0 word">Crafting</span>{" "}
-          <span className="inline-block leading-normal text-transparent opacity-0 word bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text">
-            Elegant,
-          </span>{" "}
-          <span className="inline-block text-transparent opacity-0 word bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text">
-            Performant
-          </span>{" "}
-          <span className="inline-block opacity-0 word">Web</span>{" "}
-          <span className="inline-block word">
-            <span className="inline-block opacity-0 letter">E</span>
-            <span className="inline-block opacity-0 letter">x</span>
-            <span className="inline-block opacity-0 letter">p</span>
-            <span className="inline-block opacity-0 letter">e</span>
-            <span className="inline-block opacity-0 letter">r</span>
-            <span className="inline-block opacity-0 letter">i</span>
-            <span className="inline-block opacity-0 letter">e</span>
-            <span className="inline-block opacity-0 letter">n</span>
-            <span className="inline-block opacity-0 letter">c</span>
-            <span className="inline-block opacity-0 letter">e</span>
-            <span className="inline-block opacity-0 letter">s.</span>
-          </span>
+          {["The gap between", "idea", "and product?", "That's me."].map(
+            (word, i) => (
+              <React.Fragment key={word}>
+                <span
+                  className="hero-tword"
+                  style={{
+                    display: "inline-block",
+                    opacity: 0,
+                    marginRight: "0.25em",
+                    ...(i === 1 || i === 3
+                      ? {
+                        background:
+                          "linear-gradient(120deg, #8b5cf6, #ec4899, #8b5cf6)",
+                        backgroundSize: "200%",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
+                        animation: "heroGradShift 4s ease-in-out infinite",
+                      }
+                      : {}),
+                  }}
+                >
+                  {word}
+                </span>
+              </React.Fragment>
+            )
+          )}
         </h1>
 
-        {/* New animated text section - replaces typed.js */}
-        <div className="flex items-center justify-center gap-3 text-xl font-medium opacity-0 terminal-section text-slate-200 sm:text-2xl">
-          <Terminal className="flex-shrink-0 w-6 h-6 text-emerald-400" />
-          <div 
-            ref={textContainerRef}
-            className="relative min-h-[2em] flex items-center justify-center"
-            style={{ perspective: "800px" }}
-          />
-        </div>
+        {/* Spacer */}
+        <div style={{ marginBottom: "1rem" }} />
 
-        <div className="flex flex-wrap justify-center gap-6 mt-8 buttons-section">
+        {/* CTA buttons */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, flexWrap: "wrap" }}>
           <a
             href={`mailto:${EMAIL}`}
-            className="inline-flex items-center justify-center gap-3 px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg opacity-0 group rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:shadow-pink-500/50 hover:scale-105"
+            className="hero-cta-btn"
+            style={{
+              position: "relative",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 10,
+              padding: "12px 28px",
+              fontSize: 12,
+              fontWeight: 600,
+              letterSpacing: "0.15em",
+              textTransform: "uppercase",
+              color: "#fff",
+              textDecoration: "none",
+              fontFamily: "'Courier New', monospace",
+              border: "1.5px solid rgba(139,92,246,0.4)",
+              borderRadius: 6,
+              background: "rgba(139,92,246,0.08)",
+              transition: "all 0.3s cubic-bezier(0.16,1,0.3,1)",
+              opacity: 0,
+              overflow: "hidden",
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget as HTMLElement;
+              el.style.borderColor = "rgba(139,92,246,0.7)";
+              el.style.background = "rgba(139,92,246,0.12)";
+              el.style.transform = "translateY(-2px)";
+              el.style.boxShadow = "0 8px 32px rgba(139,92,246,0.2)";
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLElement;
+              el.style.borderColor = "rgba(139,92,246,0.4)";
+              el.style.background = "rgba(139,92,246,0.08)";
+              el.style.transform = "translateY(0)";
+              el.style.boxShadow = "none";
+            }}
           >
-            <Mail className="w-5 h-5" />
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+              <polyline points="22,6 12,13 2,6" />
+            </svg>
             Get in touch
-            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
           </a>
 
           <a
             href="/Yash_Resume.pdf"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center justify-center gap-3 px-8 py-4 font-semibold text-white transition-all duration-300 shadow-lg opacity-0 group rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:shadow-pink-500/50 hover:scale-105"
+            className="hero-cta-btn"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              padding: "12px 28px",
+              fontSize: 12,
+              fontWeight: 600,
+              letterSpacing: "0.15em",
+              textTransform: "uppercase",
+              color: "rgba(255,255,255,0.5)",
+              textDecoration: "none",
+              fontFamily: "'Courier New', monospace",
+              border: "1.5px solid rgba(255,255,255,0.1)",
+              borderRadius: 6,
+              transition: "all 0.3s cubic-bezier(0.16,1,0.3,1)",
+              background: "rgba(255,255,255,0.02)",
+              opacity: 0,
+              overflow: "hidden",
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget as HTMLElement;
+              el.style.borderColor = "rgba(255,255,255,0.25)";
+              el.style.color = "rgba(255,255,255,0.9)";
+              el.style.background = "rgba(255,255,255,0.05)";
+              el.style.transform = "translateY(-2px)";
+              el.style.boxShadow = "0 8px 32px rgba(255,255,255,0.08)";
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLElement;
+              el.style.borderColor = "rgba(255,255,255,0.1)";
+              el.style.color = "rgba(255,255,255,0.5)";
+              el.style.background = "rgba(255,255,255,0.02)";
+              el.style.transform = "translateY(0)";
+              el.style.boxShadow = "none";
+            }}
           >
-            <Download className="w-5 h-5" />
-            Resume
-            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Resume.pdf
           </a>
         </div>
+      </div>
 
-        {/* Updated Social Section - Matching Footer Design */}
-        <div className="flex justify-center gap-4 mt-10 social-section">
-          {[
-            { key: 'github', url: SOCIAL_LINKS.github },
-            { key: 'linkedin', url: SOCIAL_LINKS.linkedin },
-            { key: 'instagram', url: SOCIAL_LINKS.instagram },
-            // { key: 'dribbble', url: 'https://dribbble.com/yashpokharna' },
-            { key: 'behance', url: 'https://behance.net/yashpokharna' },
-          ].map(({ key, url }) => {
-            const socialColors: Record<string, string> = {
-              github: 'from-gray-700 to-gray-900',
-              linkedin: 'from-blue-600 to-blue-800',
-              instagram: 'from-pink-500 via-purple-500 to-orange-500',
-              dribbble: 'from-pink-500 to-pink-700',
-              behance: 'from-blue-500 to-blue-700',
-            };
+      {/* ── Bottom social bar ── */}
+      <div
+        className="hero-bottom-bar"
+        style={{
+          position: "absolute",
+          bottom: 28,
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 20,
+          display: "flex",
+          alignItems: "center",
+          gap: 16,
+          opacity: 0,
+        }}
+      >
+        {[
+          { href: SOCIAL_LINKS.github, icon: <GitHubIcon />, title: "GitHub", g1: "#374151", g2: "#111827" },
+          { href: SOCIAL_LINKS.linkedin, icon: <LinkedInIcon />, title: "LinkedIn", g1: "#2563eb", g2: "#1e3a8a" },
+          { href: SOCIAL_LINKS.instagram, icon: <InstagramIcon />, title: "Instagram", g1: "#ec4899", g2: "#a855f7" },
+          { href: "https://behance.net/yashpokharna", icon: <BehanceIcon />, title: "Behance", g1: "#3b82f6", g2: "#1d4ed8" },
+        ].map(({ href, icon, title, g1, g2 }) => (
+          <a
+            key={title}
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            title={title}
+            style={{ position: "relative", width: 96, display: "flex", textDecoration: "none" }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget as HTMLElement;
+              const card = el.querySelector('[data-card]') as HTMLElement;
+              const glow = el.querySelector('[data-glow]') as HTMLElement;
+              const iconEl = el.querySelector('[data-icon]') as HTMLElement;
+              const shimmer = el.querySelector('[data-shimmer]') as HTMLElement;
+              const label = el.querySelector('[data-label]') as HTMLElement;
+              if (card) { card.style.transform = "scale(1.1)"; }
+              if (glow) { glow.style.opacity = "0.2"; }
+              if (iconEl) { iconEl.style.transform = "scale(1.25) rotate(12deg)"; iconEl.style.color = "rgba(255,255,255,1)"; }
+              if (shimmer) { shimmer.style.transform = "translateX(200%) skewX(12deg)"; }
+              if (label) { label.style.color = "rgba(255,255,255,1)"; }
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLElement;
+              const card = el.querySelector('[data-card]') as HTMLElement;
+              const glow = el.querySelector('[data-glow]') as HTMLElement;
+              const iconEl = el.querySelector('[data-icon]') as HTMLElement;
+              const shimmer = el.querySelector('[data-shimmer]') as HTMLElement;
+              const label = el.querySelector('[data-label]') as HTMLElement;
+              if (card) { card.style.transform = "scale(1)"; }
+              if (glow) { glow.style.opacity = "0"; }
+              if (iconEl) { iconEl.style.transform = "scale(1) rotate(0deg)"; iconEl.style.color = "rgba(203,213,225,0.7)"; }
+              if (shimmer) { shimmer.style.transform = "translateX(-100%) skewX(12deg)"; }
+              if (label) { label.style.color = "rgba(203,213,225,0.7)"; }
+            }}
+          >
+            <div
+              data-card="true"
+              style={{
+                position: "relative",
+                overflow: "hidden",
+                padding: 16,
+                borderRadius: 16,
+                background: "transparent",
+                transition: "all 0.5s cubic-bezier(0.16,1,0.3,1)",
+                width: "100%",
+              }}
+            >
+              {/* Per-platform gradient glow on hover */}
+              <div
+                data-glow="true"
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  opacity: 0,
+                  background: `linear-gradient(135deg, ${g1}, ${g2})`,
+                  filter: "blur(24px)",
+                  transition: "opacity 0.5s",
+                  pointerEvents: "none",
+                }}
+              />
 
-            const socialIcons: Record<string, React.ComponentType<any>> = {
-              github: Github,
-              linkedin: Linkedin,
-              dribbble: Dribbble,
-              behance: (props: any) => (
-                <svg {...props} viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M6.5 4.5h3.8c1.7 0 3.1 1.4 3.1 3.1 0 1-.5 1.9-1.2 2.4.9.5 1.5 1.5 1.5 2.6 0 1.7-1.4 3.1-3.1 3.1H6.5V4.5zm2 4.5h1.8c.6 0 1.1-.5 1.1-1.1s-.5-1.1-1.1-1.1H8.5V9zm0 4.7h1.8c.6 0 1.1-.5 1.1-1.1 0-.6-.5-1.1-1.1-1.1H8.5v2.2zM15.5 6h5v1.5h-5V6zm.5 5.5c0-2.2 1.8-4 4-4s4 1.8 4 4c0 .3 0 .5-.1.8h-6c.3 1.1 1.3 1.9 2.4 1.9.8 0 1.5-.4 2-.9l1.3 1c-.8.9-2 1.5-3.3 1.5-2.2 0-4-1.8-4-4zm6.2-.8c-.3-1-1.2-1.7-2.2-1.7s-1.9.7-2.2 1.7h4.4z"/>
-                </svg>
-              ),
-              instagram: Instagram
-            };
-
-            const Icon = socialIcons[key];
-
-            return (
-              <a
-                key={key}
-                href={url}
-                target="_blank"
-                rel="noreferrer"
-                className="relative group"
-              >
-                <div className="relative p-4 overflow-hidden transition-all duration-500 rounded-2xl bg-slate-900/30 backdrop-blur-sm hover:scale-110 hover:bg-slate-900/50">
-                  <div className={`
-                    absolute inset-0 opacity-0 group-hover:opacity-20
-                    bg-gradient-to-br ${socialColors[key]}
-                    transition-opacity duration-500 blur-2xl
-                  `}></div>
-
-                  <div className="relative z-10 flex flex-col items-center gap-2">
-                    <Icon className="w-5 h-5 transition-all duration-500 text-slate-300 group-hover:text-white group-hover:scale-125 group-hover:rotate-12" />
-                    <span className="text-xs font-semibold capitalize transition-colors duration-300 text-slate-300 group-hover:text-white">
-                      {key}
-                    </span>
-                  </div>
-                  <div className="absolute inset-0 transition-transform duration-1000 -translate-x-full skew-x-12 group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+              {/* Content */}
+              <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+                <div
+                  data-icon="true"
+                  style={{ color: "rgba(203,213,225,0.7)", transition: "all 0.5s cubic-bezier(0.16,1,0.3,1)" }}
+                >
+                  {icon}
                 </div>
-              </a>
-            );
-          })}
+                <span
+                  data-label="true"
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 600,
+                    textTransform: "capitalize",
+                    transition: "color 0.3s",
+                    color: "rgba(203,213,225,0.7)",
+                    textAlign: "center",
+                    fontFamily: "'Courier New', monospace",
+                  }}
+                >
+                  {title.toLowerCase()}
+                </span>
+              </div>
+
+              {/* Shimmer sweep */}
+              <div
+                data-shimmer="true"
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  transform: "translateX(-100%) skewX(12deg)",
+                  background: "linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent)",
+                  transition: "transform 1s cubic-bezier(0.16,1,0.3,1)",
+                  pointerEvents: "none",
+                }}
+              />
+            </div>
+          </a>
+        ))}
+
+      </div>
+
+      {/* ── Scroll indicator ── */}
+      <div
+        className="hero-scroll-indicator"
+        style={{
+          position: "absolute",
+          bottom: 28,
+          right: 32,
+          zIndex: 20,
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          opacity: 0,
+        }}
+      >
+        <div style={{ width: 1, height: 50, background: "rgba(255,255,255,0.08)", position: "relative", overflow: "hidden" }}>
+          <div
+            style={{
+              position: "absolute",
+              top: "-40%",
+              width: 1,
+              height: "40%",
+              background: "linear-gradient(to bottom, transparent, #7c3aed)",
+              animation: "heroScrollRun 2s ease-in-out infinite",
+            }}
+          />
         </div>
+        <span
+          style={{
+            fontSize: 9,
+            letterSpacing: "0.25em",
+            color: "rgba(255,255,255,0.15)",
+            textTransform: "uppercase",
+            writingMode: "vertical-rl",
+          }}
+        >
+          Scroll
+        </span>
       </div>
 
-      {/* Floating skill icons with entry animations */}
-      <div className="absolute opacity-0 floating-icon top-16 left-8 w-14 h-14" style={{ animationDelay: "0s" }}>
-        <Image
-          src="/skills/react.svg"
-          alt="React"
-          width={56}
-          height={56}
-          className="object-contain animate-float"
-        />
-      </div>
-      <div
-        className="absolute opacity-0 floating-icon top-32 right-12 w-14 h-14"
-        style={{ animationDelay: "0.8s" }}
-      >
-        <Image
-          src="/skills/figma.svg"
-          alt="Figma"
-          width={56}
-          height={56}
-          className="object-contain animate-float"
-        />
-      </div>
-      <div
-        className="absolute opacity-0 floating-icon bottom-40 left-20 w-14 h-14"
-        style={{ animationDelay: "1.5s" }}
-      >
-        <Image
-          src="/skills/next.svg"
-          alt="Next.js"
-          width={56}
-          height={56}
-          className="object-contain animate-float"
-        />
-      </div>
-      <div
-        className="absolute opacity-0 floating-icon bottom-28 right-16 w-14 h-14"
-        style={{ animationDelay: "2.2s" }}
-      >
-        <Image
-          src="/skills/tailwind.svg"
-          alt="Tailwind"
-          width={56}
-          height={56}
-          className="object-contain animate-float"
-        />
-      </div>
-
-      <style jsx>{`
-        @keyframes float {
-          0%,
-          100% {
-            transform: translateY(0);
-            opacity: 0.3;
-          }
-          50% {
-            transform: translateY(-15px);
-            opacity: 0.7;
-          }
-        }
-        .animate-float {
-          animation: float 4s ease-in-out infinite;
-        }
+      {/* ── Global keyframes ── */}
+      <style>{`
+        @keyframes heroStatusLoad { to { width: 100%; } }
+        @keyframes heroShimmer { 0%{background-position:0% 0%} 100%{background-position:200% 0%} }
+        @keyframes heroBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+        @keyframes heroGradShift { 0%,100%{background-position:0%} 50%{background-position:100%} }
+        @keyframes heroScrollRun { 0%{top:-40%} 100%{top:140%} }
       `}</style>
     </section>
   );
 });
 
-HeroSection.displayName = "LandingHero";
+HeroSection.displayName = "HeroSection";
 
 export default HeroSection;
