@@ -358,43 +358,74 @@ const HeroSection = React.memo(() => {
         "-=0.2"
       );
 
-      // CTA buttons
+      // CTA buttons — spring up from below, overshoot, settle
       tl.fromTo(
         ".hero-cta-btn",
-        { y: 20, opacity: 0, scale: 0.95 },
+        { y: 40, opacity: 0, scale: 0.8, filter: "blur(8px)" },
         {
           y: 0,
           opacity: 1,
           scale: 1,
-          duration: 0.6,
-          ease: "back.out(1.5)",
-          stagger: 0.12,
+          filter: "blur(0px)",
+          duration: 0.9,
+          ease: "elastic.out(1, 0.5)",
+          stagger: 0.15,
         },
-        "-=0.2"
+        "-=0.1"
+      );
+
+      // CTA glow pulse after landing
+      tl.fromTo(
+        ".hero-cta-btn",
+        { boxShadow: "0 0 0px rgba(139,92,246,0)" },
+        {
+          boxShadow: "0 0 28px rgba(139,92,246,0.35)",
+          duration: 0.5,
+          ease: "power2.out",
+          stagger: 0.15,
+          yoyo: true,
+          repeat: 1,
+        },
+        "-=0.3"
       );
 
       // HUD panels
       tl.fromTo(
         ".hero-hud",
-        { opacity: 0 },
-        { opacity: 1, duration: 0.8, ease: "power2.out" },
+        { opacity: 0, x: (i) => i === 0 ? -20 : 20 },
+        { opacity: 1, x: 0, duration: 0.8, ease: "power3.out" },
+        "-=0.6"
+      );
+
+      // Social cards — fan in from below with blur + staggered elastic bounce
+      tl.fromTo(
+        ".hero-bottom-bar a",
+        { y: 60, opacity: 0, scale: 0.6, filter: "blur(12px)", rotateX: 45 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          filter: "blur(0px)",
+          rotateX: 0,
+          duration: 1,
+          ease: "elastic.out(1, 0.55)",
+          stagger: {
+            each: 0.1,
+            from: "center",
+          },
+        },
         "-=0.4"
       );
 
-      // Bottom bar
-      tl.fromTo(
-        ".hero-bottom-bar",
-        { opacity: 0, y: 10 },
-        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-        "-=0.4"
-      );
+      // Bottom bar wrapper fade (just opacity, cards handle the motion)
+      tl.set(".hero-bottom-bar", { opacity: 1 }, "-=1");
 
       // Scroll indicator
       tl.fromTo(
         ".hero-scroll-indicator",
-        { opacity: 0 },
-        { opacity: 1, duration: 0.6, ease: "power2.out" },
-        "-=0.3"
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+        "-=0.6"
       );
 
       // HUD bars animate after everything else
@@ -917,7 +948,7 @@ const HeroSection = React.memo(() => {
             target="_blank"
             rel="noreferrer"
             title={title}
-            style={{ position: "relative", width: 96, display: "flex", textDecoration: "none" }}
+            style={{ position: "relative", width: 96, display: "flex", textDecoration: "none", opacity: 0 }}
             onMouseEnter={(e) => {
               const el = e.currentTarget as HTMLElement;
               const card = el.querySelector('[data-card]') as HTMLElement;
