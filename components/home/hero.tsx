@@ -26,11 +26,11 @@ interface Particle {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const ROLES = [
+  "AI Integrator",
   "Frontend Engineer",
   "Full Stack Dev",
   "UI / UX Craftsman",
   "Mobile App Developer",
-  "Creative Developer",
 ];
 
 const BOOT_MESSAGES = [
@@ -53,17 +53,17 @@ const STACK = [
 const GLITCH_CHARS = "!@#$%^&*<>?/\\|{}[]~";
 
 const HUD_BARS = [
-  { label: "Experience", value: "1.5 years", width: "45%" },
+  { label: "Experience", value: "1.8 years", width: "80%" },
   { label: "AI / LLM", value: "API-integrated", width: "60%" },
   { label: "Code", value: "Type-safe", width: "80%" },
 ];
 
 const HUD_TAGS = [
+  { label: "AI Integrated", active: true },
   { label: "Frontend Dev", active: true },
   { label: "Full Stack", active: true },
   { label: "UI / UX", active: true },
-  { label: "Flutter / Mobile", active: true },
-  { label: "AI Integrated", active: false },
+  { label: "Flutter / Mobile", active: false },
 ];
 
 // ─── Particle helpers ─────────────────────────────────────────────────────────
