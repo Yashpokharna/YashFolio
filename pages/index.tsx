@@ -1,90 +1,58 @@
-import { METADATA } from "../constants";
 import Head from "next/head";
-import React, { useEffect, useState } from "react";
-import gsap from "gsap";
-import ScrollTrigger from "gsap/ScrollTrigger";
-import Layout from "@/components/common/layout";
-import Header from "@/components/common/header";
-import ProgressIndicator from "@/components/common/progress-indicator";
-import Cursor from "@/components/common/cursor";
-import HeroSection from "@/components/home/hero";
-import ProjectsSection from "@/components/home/projects";
-import QuoteSection from "@/components/home/quote";
-import SkillsSection from "@/components/home/skills";
-import CollaborationSection from "@/components/home/collaboration";
-import Footer from "@/components/common/footer";
-import AboutSection from "@/components/home/about";
-import LoadingScreen from "@/components/common/LoadingScreen";
-import { useLoading } from "../context/LoadingContext";
+import { METADATA } from "../constants";
+import Preloader from "@/components/common/Preloader";
+import SmoothScroller from "@/components/common/SmoothScroller";
+import Header from "@/components/common/Header";
+import Cursor from "@/components/common/Cursor";
+import ChapterNav from "@/components/common/ChapterNav";
+import ScrollProgress from "@/components/common/ScrollProgress";
+import Hero from "@/components/home/Hero";
+import Origin from "@/components/home/Origin";
+import Journey from "@/components/home/Journey";
+import Works from "@/components/home/Works";
+import Obsession from "@/components/home/Obsession";
+import Toolbox from "@/components/home/Toolbox";
+import Contact from "@/components/home/Contact";
 
-const DEBOUNCE_TIME = 100;
-
-export const isSmallScreen = (): boolean => document.body.clientWidth < 767;
-export const NO_MOTION_PREFERENCE_QUERY =
-  "(prefers-reduced-motion: no-preference)";
-
-// ✅ optional shared interface for components that accept isDesktop
-export interface IDesktopProps {
-  isDesktop: boolean;
-}
-
+// Render order matters: the smoother is created first, then every section
+// builds its ScrollTriggers top-to-bottom, and the fixed UI that measures the
+// whole page (header, chapter nav, progress) comes last.
 export default function Home() {
-  const [isDesktop, setIsDesktop] = useState(true);
-  const { isLoaded } = useLoading();
-
-  let timer: NodeJS.Timeout | null = null;
-
-  const debouncedDimensionCalculator = () => {
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(() => {
-      const isDesktopResult =
-        typeof window.orientation === "undefined" &&
-        navigator.userAgent.indexOf("IEMobile") === -1;
-
-      window.history.scrollRestoration = "manual";
-
-      setIsDesktop(isDesktopResult);
-    }, DEBOUNCE_TIME);
-  };
-
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-    gsap.config({ nullTargetWarn: false });
-  }, []);
-
-  useEffect(() => {
-    debouncedDimensionCalculator();
-    window.addEventListener("resize", debouncedDimensionCalculator);
-    return () =>
-      window.removeEventListener("resize", debouncedDimensionCalculator);
-  }, []);
-
-  const renderBackdrop = (): React.ReactNode => (
-    <div className="fixed top-0 left-0 w-screen h-screen bg-gray-900 -z-1"></div>
-  );
-
-  if (!isLoaded) return <LoadingScreen />;
-
   return (
     <>
       <Head>
         <title>{METADATA.title}</title>
+        <meta name="description" content={METADATA.description} />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={METADATA.title} />
+        <meta property="og:description" content={METADATA.description} />
+        <meta property="og:url" content={METADATA.url} />
+        <meta name="twitter:card" content="summary_large_image" />
       </Head>
-      <Layout>
-        <Header />
-        <ProgressIndicator />
-        <Cursor isDesktop={isDesktop} />
-        <main className="flex flex-col">
-          {renderBackdrop()}
-          <HeroSection />
-          <AboutSection />
-          <ProjectsSection isDesktop={isDesktop} />
-          <QuoteSection />
-          <SkillsSection />
-          <CollaborationSection />
-          <Footer />
-        </main>
-      </Layout>
+
+      <Preloader />
+      <SmoothScroller />
+
+      <div id="smooth-wrapper">
+        <div id="smooth-content">
+          <main>
+            <Hero />
+            <Origin />
+            <Journey />
+            <Works />
+            <Obsession />
+            <Toolbox />
+            <Contact />
+          </main>
+        </div>
+      </div>
+
+      <Header />
+      <ChapterNav />
+      <ScrollProgress />
+      <Cursor />
+      <div className="grain" aria-hidden />
     </>
   );
 }
