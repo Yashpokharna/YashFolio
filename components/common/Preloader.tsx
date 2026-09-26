@@ -4,10 +4,19 @@ import { useApp } from "../../context/AppContext";
 
 const GREETINGS = ["Hello", "Bonjour", "Hola", "Ciao", "नमस्ते"];
 const COLUMNS = 5;
-const FIRST_IN = 0.2; // when the first greeting starts rolling in
-const STEP = 0.55; // time each greeting owns the slot
-const ROLL = 0.45; // duration of one roll (out + in together)
-const HOLD_LAST = 1; // नमस्ते holds while its gradient sweep plays
+const FIRST_IN = 0.15; // when the first greeting starts rolling in
+const STEP = 0.32; // time each greeting owns the slot
+const ROLL = 0.3; // duration of one roll (out + in together)
+const HOLD_LAST = 0.55; // नमस्ते holds while its gradient sweep plays
+const SEEN_KEY = "yp-intro-seen"; // repeat visits in a session skip the greetings
+
+const seenIntro = () => {
+  try {
+    return sessionStorage.getItem(SEEN_KEY) === "1";
+  } catch {
+    return false;
+  }
+};
 
 const Preloader = () => {
   const root = useRef<HTMLDivElement>(null);
@@ -24,6 +33,17 @@ const Preloader = () => {
       const exitAt = lastAt + ROLL + HOLD_LAST;
 
       const tl = gsap.timeline({ onComplete: () => setGone(true) });
+
+      // Already greeted this session: just lift the curtain.
+      if (seenIntro()) {
+        tl.set(q(".pl-stage"), { autoAlpha: 0 })
+          .to(q(".pl-col"), { yPercent: -100, duration: 0.8, ease: "expo.inOut", stagger: 0.04 }, 0.05)
+          .call(() => setReady(true), undefined, 0.2);
+        return;
+      }
+      try {
+        sessionStorage.setItem(SEEN_KEY, "1");
+      } catch {}
 
       // Ticker: the outgoing greeting and the incoming one roll up together,
       // so the slot is never empty and they never overlap.
@@ -47,20 +67,20 @@ const Preloader = () => {
       tl.fromTo(
         words[last],
         { backgroundPosition: "100% 0" },
-        { backgroundPosition: "0% 0", duration: 1.1, ease: "power2.inOut" },
+        { backgroundPosition: "0% 0", duration: 0.75, ease: "power2.inOut" },
         lastAt + ROLL - 0.1
       );
 
       // Exit: the greeting rolls away first, then the curtain lifts.
       tl.addLabel("exit", exitAt)
-        .to(words[last], { yPercent: -120, duration: 0.5, ease: "power3.in" }, "exit")
-        .set(q(".pl-stage"), { autoAlpha: 0 }, "exit+=0.5")
+        .to(words[last], { yPercent: -120, duration: 0.4, ease: "power3.in" }, "exit")
+        .set(q(".pl-stage"), { autoAlpha: 0 }, "exit+=0.4")
         .to(
           q(".pl-col"),
-          { yPercent: -100, duration: 1, ease: "expo.inOut", stagger: 0.06 },
-          "exit+=0.45"
+          { yPercent: -100, duration: 0.9, ease: "expo.inOut", stagger: 0.05 },
+          "exit+=0.3"
         )
-        .call(() => setReady(true), undefined, "exit+=0.6");
+        .call(() => setReady(true), undefined, "exit+=0.45");
 
       if (prefersReducedMotion()) tl.timeScale(2.5);
     },

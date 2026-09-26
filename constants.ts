@@ -135,7 +135,7 @@ export const PROJECTS: IProject[] = [
       "A textile manufacturer's digital storefront — fully responsive, animated with scroll-triggered GSAP and deployed on a custom domain.",
     gradient: ["#3a0000", "#b91c1c"],
     tech: ["Next.js", "React", "GSAP", "Tailwind"],
-    image: "/projects/TwinsApparels.jpg",
+    image: "/projects/TwinsApparels.webp",
     url: "https://twinsapparels.in/",
   },
   {
@@ -146,7 +146,7 @@ export const PROJECTS: IProject[] = [
       "A trustworthy web presence for a chartered accountancy firm — services, people and contact, as precise as the numbers they manage.",
     gradient: ["#003052", "#167187"],
     tech: ["Angular", "TypeScript", "Next.js", "npm"],
-    image: "/projects/Bolia.jpg",
+    image: "/projects/Bolia.webp",
     url: "https://bolia.netlify.app/",
   },
   {
@@ -157,7 +157,7 @@ export const PROJECTS: IProject[] = [
       "An expense tracker that makes money visible — spending turned into charts and graphs you can actually read.",
     gradient: ["#0c4a6e", "#1abcfe"],
     tech: ["HTML", "CSS", "Tailwind", "JavaScript"],
-    image: "/projects/trackit.jpg",
+    image: "/projects/trackit.webp",
     url: "https://trackit.yashpokharna.in/",
   },
   {
@@ -168,7 +168,7 @@ export const PROJECTS: IProject[] = [
       "A personal portfolio in three dimensions — custom-designed 3D models for every element, animated with GSAP.",
     gradient: ["#172554", "#3b82f6"],
     tech: ["React", "GSAP", "Tailwind", "Figma"],
-    image: "/projects/3DPersonalFolio.jpg",
+    image: "/projects/3DPersonalFolio.webp",
     url: "https://3dportfolio.yashpokharna.in/",
   },
 ];

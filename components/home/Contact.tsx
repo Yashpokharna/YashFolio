@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { ArrowUp, ArrowUpRight, Check, Copy } from "lucide-react";
-import { gsap, scrollToId } from "@/lib/gsap";
+import { gsap, ScrollTrigger, isTouch, scrollToId } from "@/lib/gsap";
 import { useScene } from "../../context/AppContext";
 import { EMAIL } from "../../constants";
 import { ChapterLabel, Magnetic, SplitReveal, revealOnScroll } from "../common/ui";
@@ -11,6 +11,7 @@ const SLIDE_B = "Frontend Development ✦ Motion Graphics ✦ AI Integration ✦
 
 const Contact = () => {
   const root = useRef<HTMLElement>(null);
+  const markRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
 
   useScene(
@@ -56,8 +57,34 @@ const Contact = () => {
           scrollTrigger: { trigger: ".footer-mark", start: "top bottom+=600", end: "max", scrub: true },
         }
       );
+      ScrollTrigger.create({
+        trigger: ".footer-mark",
+        start: "top bottom",
+        end: "bottom top",
+        toggleClass: "is-live",
+      });
 
-      revealOnScroll(root.current);
+      // A soft light follows the pointer across the wordmark while it's near.
+      const section = root.current!;
+      const mark = markRef.current;
+      let onMove = (_e: PointerEvent) => {};
+      if (mark && !isTouch()) {
+        gsap.set(mark, { "--glow": 0 });
+        const glow = gsap.quickTo(mark, "--glow", { duration: 0.6, ease: "power2.out" });
+        onMove = (e: PointerEvent) => {
+          const r = mark.getBoundingClientRect();
+          const near = e.clientY > r.top - 160 && e.clientY < r.bottom + 60;
+          if (near) {
+            mark.style.setProperty("--mx", `${e.clientX - r.left}px`);
+            mark.style.setProperty("--my", `${e.clientY - r.top}px`);
+          }
+          glow(near ? 0.6 : 0);
+        };
+        section.addEventListener("pointermove", onMove);
+      }
+
+      revealOnScroll(section);
+      return () => section.removeEventListener("pointermove", onMove);
     },
     root
   );
@@ -136,7 +163,7 @@ const Contact = () => {
         </button>
       </footer>
 
-      <div className="footer-mark font-display" aria-hidden>
+      <div ref={markRef} className="footer-mark font-display" aria-hidden>
         Yash Pokharna
       </div>
     </section>

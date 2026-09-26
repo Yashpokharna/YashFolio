@@ -21,7 +21,9 @@ const SmoothScroller = (): null => {
       content: "#smooth-content",
       smooth: prefersReducedMotion() ? 0 : 1.15,
       smoothTouch: 0.1,
-      effects: true,
+      // No data-speed / data-lag elements on the page, so skip the per-frame
+      // effects bookkeeping.
+      effects: false,
     });
     smoother.paused(true);
 
