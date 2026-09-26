@@ -1089,6 +1089,7 @@ html.has-cursor .cursor-dot {
   display: block;
   overflow: hidden;
   isolation: isolate;
+  container-type: inline-size;
   aspect-ratio: 4 / 3.4;
   border-radius: 28px;
   background: linear-gradient(135deg, var(--c1), var(--c2));
@@ -1145,10 +1146,14 @@ html.has-cursor .cursor-dot {
   bottom: clamp(12px, 1.8vw, 28px);
   z-index: 2;
   margin: 0;
-  font-size: clamp(38px, 7.2vw, 136px);
+  // Sized off the card (not the viewport) so the longest name, "Twins
+  // Apparels" at ~6.7em, stays on one line even when the card is capped by
+  // viewport height on wide, short screens.
+  font-size: clamp(32px, 11cqw, 136px);
   font-weight: 700;
   line-height: 0.9;
   letter-spacing: -0.055em;
+  white-space: nowrap;
   color: #fff;
   pointer-events: none;
 }
