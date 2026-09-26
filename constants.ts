@@ -7,7 +7,6 @@ export const METADATA = {
 
 export const EMAIL = "yashpokharna2002@gmail.com";
 export const LOCATION = "Ahmedabad, India";
-export const TIMEZONE = "Asia/Kolkata";
 export const RESUME = "/Yash_Resume.pdf";
 
 export const SOCIAL_LINKS = {
@@ -23,7 +22,6 @@ export const MENULINKS = [
   { name: "Origin", ref: "about" },
   { name: "Journey", ref: "journey" },
   { name: "Works", ref: "works" },
-  { name: "Obsession", ref: "obsession" },
   { name: "Toolbox", ref: "skills" },
   { name: "Contact", ref: "contact" },
 ];

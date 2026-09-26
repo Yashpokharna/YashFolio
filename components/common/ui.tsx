@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { gsap, SplitText, isTouch } from "@/lib/gsap";
 import { useScene } from "../../context/AppContext";
-import { TIMEZONE } from "../../constants";
 
 /* ── Magnetic: children drift toward the pointer, spring back on leave ── */
 export const Magnetic = ({
@@ -74,27 +73,6 @@ export const RollText = ({ text }: { text: string }) => (
     ))}
   </span>
 );
-
-/* ── Live clock in Yash's timezone ── */
-export const LocalTime = ({ seconds = false }: { seconds?: boolean }) => {
-  const [time, setTime] = useState("");
-
-  useEffect(() => {
-    const fmt = new Intl.DateTimeFormat("en-GB", {
-      timeZone: TIMEZONE,
-      hour: "2-digit",
-      minute: "2-digit",
-      second: seconds ? "2-digit" : undefined,
-      hour12: false,
-    });
-    const tick = () => setTime(fmt.format(new Date()));
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, [seconds]);
-
-  return <span className="tabular-nums">{time || "--:--"}</span>;
-};
 
 /* ── SplitReveal: masked line/char reveal when scrolled into view ── */
 export const SplitReveal = ({

@@ -105,7 +105,7 @@ const Toolbox = () => {
     <section id="skills" ref={root} className="chapter relative overflow-hidden py-28 md:py-40">
       <div className="flex flex-col justify-between gap-8 px-pad md:flex-row md:items-end">
         <div>
-          <ChapterLabel num="05" title="The Toolbox" />
+          <ChapterLabel num="04" title="The Toolbox" />
           <SplitReveal as="h2" className="toolbox-title font-display mt-6">
             Tools of the <span className="font-serif italic font-normal text-grad">trade.</span>
           </SplitReveal>

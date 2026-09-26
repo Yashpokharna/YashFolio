@@ -3,9 +3,8 @@ import { ArrowUp, ArrowUpRight, Check, Copy } from "lucide-react";
 import { gsap, scrollToId } from "@/lib/gsap";
 import { useScene } from "../../context/AppContext";
 import { EMAIL } from "../../constants";
-import { ChapterLabel, LocalTime, Magnetic, SplitReveal, revealOnScroll } from "../common/ui";
+import { ChapterLabel, Magnetic, SplitReveal, revealOnScroll } from "../common/ui";
 import { SOCIALS } from "../common/icons";
-import CurvedLoop from "./CurvedLoop";
 
 const SLIDE_A = "User Interface Design ✦ User Experience Design ✦ ";
 const SLIDE_B = "Frontend Development ✦ Motion Graphics ✦ AI Integration ✦ ";
@@ -85,7 +84,7 @@ const Contact = () => {
 
       <div className="mt-28 grid items-end gap-14 px-pad md:mt-40 lg:grid-cols-[1.5fr_1fr]">
         <div>
-          <ChapterLabel num="06" title="The Next Chapter" />
+          <ChapterLabel num="05" title="The Next Chapter" />
           <SplitReveal as="h2" className="contact-title font-display mt-8">
             Let&apos;s write the next chapter{" "}
             <span className="font-serif italic font-normal text-grad">together.</span>
@@ -129,19 +128,10 @@ const Contact = () => {
         ))}
       </div>
 
-      <div className="relative mt-8">
-        <CurvedLoop text="Let's Build Something Amazing ✦ " speed={1.4} curve={320} />
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-ink to-transparent md:w-40" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-ink to-transparent md:w-40" />
-      </div>
-
-      <footer className="relative z-10 grid gap-4 px-pad pb-6 pt-10 mono-label text-fg/45 md:grid-cols-4 md:items-center">
+      <footer className="relative z-10 mt-16 grid gap-4 px-pad pb-6 pt-10 mono-label text-fg/45 md:mt-24 md:grid-cols-3 md:items-center">
         <span>© {new Date().getFullYear()} Yash Pokharna</span>
-        <span>Handcrafted with passion & precision</span>
-        <span>
-          Local time · <LocalTime seconds /> IST
-        </span>
-        <button onClick={() => scrollToId("home")} className="flex items-center gap-2 md:justify-self-end hover:text-fg transition-colors">
+        <span className="md:text-center">Handcrafted with passion & precision</span>
+        <button onClick={() => scrollToId("home")} className="flex items-center gap-2 uppercase md:justify-self-end hover:text-fg transition-colors">
           Back to the beginning <ArrowUp className="h-3.5 w-3.5" />
         </button>
       </footer>
