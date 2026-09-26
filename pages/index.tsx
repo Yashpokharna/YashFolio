@@ -10,7 +10,6 @@ import Hero from "@/components/home/Hero";
 import Origin from "@/components/home/Origin";
 import Journey from "@/components/home/Journey";
 import Works from "@/components/home/Works";
-import Obsession from "@/components/home/Obsession";
 import Toolbox from "@/components/home/Toolbox";
 import Contact from "@/components/home/Contact";
 
@@ -41,7 +40,6 @@ export default function Home() {
             <Origin />
             <Journey />
             <Works />
-            <Obsession />
             <Toolbox />
             <Contact />
           </main>

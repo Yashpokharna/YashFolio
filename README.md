@@ -1,6 +1,6 @@
 # YashFolio — Developer Portfolio 🚀
 
-My personal portfolio, told as a story in seven scroll-driven chapters.
+My personal portfolio, told as a story in six scroll-driven chapters.
 
 ## 🌐 Live Demo
 
@@ -16,9 +16,8 @@ My personal portfolio, told as a story in seven scroll-driven chapters.
 | 01 | Origin | A pinned paragraph that lights up word by word as you scroll, plus counting stats |
 | 02 | Journey | A pinned timeline — the year rolls like an odometer while milestone cards stack |
 | 03 | Works | Horizontal scroll through projects with clip reveals, parallax and velocity skew |
-| 04 | Obsession | A paper-coloured chapter where the quote collapses under physics when hovered |
-| 05 | Toolbox | Marquees that speed up and reverse with your scroll, and a hoverable skills list |
-| 06 | Next Chapter | Contact, sliding text, a draggable curved marquee and the footer wordmark |
+| 04 | Toolbox | Marquees that speed up and reverse with your scroll, and a hoverable skills list |
+| 05 | Next Chapter | Contact, sliding text, socials and the footer wordmark |
 
 ## 🛠️ Tech Stack
 
