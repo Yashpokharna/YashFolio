@@ -150,17 +150,6 @@ export const PROJECTS: IProject[] = [
     url: "https://bolia.netlify.app/",
   },
   {
-    name: "Resumify",
-    category: "Web App",
-    meta: "Personal",
-    description:
-      "Create professional resumes online — pick a layout, fill in the story, export a polished resume in minutes.",
-    gradient: ["#134e4a", "#2dd4bf"],
-    tech: ["React", "HTML", "CSS", "npm"],
-    image: "/projects/Resumify.jpg",
-    url: "https://resumify.yashpokharna.in/",
-  },
-  {
     name: "Track-IT",
     category: "Finance Tool",
     meta: "Personal",

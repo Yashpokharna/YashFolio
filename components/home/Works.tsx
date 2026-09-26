@@ -251,17 +251,12 @@ const Works = () => {
               That&apos;s not <em className="text-grad">all.</em>
             </h3>
             <p className="max-w-sm text-fg/60 text-lg">
-              More experiments, clones and late-night ideas live on GitHub & Behance.
+              More experiments, clones and late-night ideas live on GitHub.
             </p>
             <div className="flex flex-wrap gap-3">
               <Magnetic>
                 <a href={SOCIAL_LINKS.github} target="_blank" rel="noreferrer" className="pill-btn pill-btn--primary">
                   GitHub <ArrowUpRight className="h-4 w-4" />
-                </a>
-              </Magnetic>
-              <Magnetic>
-                <a href={SOCIAL_LINKS.behance} target="_blank" rel="noreferrer" className="pill-btn">
-                  Behance <ArrowUpRight className="h-4 w-4" />
                 </a>
               </Magnetic>
             </div>
