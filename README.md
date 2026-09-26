@@ -1,6 +1,6 @@
-# YashFolio - Developer Portfolio 🚀
+# YashFolio — Developer Portfolio 🚀
 
-Welcome to **YashFolio**, my personal developer portfolio website built to showcase my skills, projects, and experience in frontend development. Designed with simplicity, responsiveness, and performance in mind.
+My personal portfolio, told as a story in seven scroll-driven chapters.
 
 ## 🌐 Live Demo
 
@@ -8,39 +8,33 @@ Welcome to **YashFolio**, my personal developer portfolio website built to showc
 
 ---
 
-## ✨ Features
+## 📖 The chapters
 
-- Responsive design for desktop and mobile
-- Clean, modern UI with smooth transitions
-- Projects showcase with live links
-- About Me, Skills, and Contact sections
-- Built with performance and accessibility in mind
-
----
+| # | Chapter | What happens |
+|---|---------|--------------|
+| 00 | Prologue | WebGL aurora + particle field; the name glitches in, then explodes on scroll |
+| 01 | Origin | A pinned paragraph that lights up word by word as you scroll, plus counting stats |
+| 02 | Journey | A pinned timeline — the year rolls like an odometer while milestone cards stack |
+| 03 | Works | Horizontal scroll through projects with clip reveals, parallax and velocity skew |
+| 04 | Obsession | A paper-coloured chapter where the quote collapses under physics when hovered |
+| 05 | Toolbox | Marquees that speed up and reverse with your scroll, and a hoverable skills list |
+| 06 | Next Chapter | Contact, sliding text, a draggable curved marquee and the footer wordmark |
 
 ## 🛠️ Tech Stack
 
-- **React.js** – JavaScript library for building UI
-- **Tailwind CSS** – Utility-first CSS framework
-- **Vite** – Lightning-fast frontend build tool
-- **Netlify** – For continuous deployment & hosting
-- **Gsap** – For animations and transitions
+- **Next.js** (pages router) + **React** + **TypeScript**
+- **GSAP 3.13** — ScrollTrigger, ScrollSmoother, SplitText, ScrambleText
+- **Tailwind CSS** + **Sass**
+- Raw **WebGL** shader for the hero background
 
----
+## ✏️ Editing content
+
+Everything textual — story, journey milestones, projects, skills, links — lives in
+[`constants.ts`](constants.ts). Project screenshots go in `public/projects/`.
 
 ## 🚀 Getting Started
 
-To run this project locally:
-
 ```bash
-# Clone the repository
-git clone https://github.com/Yashpokharna/YashFolio.git
-
-# Navigate to the project directory
-cd YashFolio
-
-# Install dependencies
 npm install
-
-# Start the development server
 npm run dev
+```
