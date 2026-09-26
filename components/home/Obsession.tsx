@@ -6,17 +6,90 @@ import { ChapterLabel, revealOnScroll } from "../common/ui";
 
 const QUOTE = "I have a Strong Obsession for Attention to Detail.";
 const HIGHLIGHT = ["strong", "obsession", "attention", "detail"];
+const WORDS = QUOTE.split(" ");
+
+// Tiny illustrations that sit on top of each principle card.
+const CodeVisual = () => (
+  <pre className="pv-code" aria-hidden>
+    <span className="pv-ln">1</span>
+    <span className="k">const</span> <span className="f">ship</span> = (idea: <span className="t">Idea</span>) =&gt;
+    {"\n"}
+    <span className="pv-ln">2</span>
+    {"  "}
+    <span className="f">polish</span>(idea, {"{"} edgeCases: <span className="k">true</span> {"}"});
+    {"\n"}
+    <span className="pv-ln">3</span>
+    <span className="c">{"// typed, tested, readable"}</span>
+    <span className="pv-caret" />
+  </pre>
+);
+
+const CurveVisual = () => (
+  <svg className="pv-curve" viewBox="0 0 260 130" aria-hidden>
+    <defs>
+      <linearGradient id="pv-curve-grad" x1="0" x2="1">
+        <stop offset="0" stopColor="#67e8f9" />
+        <stop offset="1" stopColor="#3b82f6" />
+      </linearGradient>
+    </defs>
+    <line x1="26" y1="104" x2="78" y2="18" className="pv-handle" />
+    <line x1="234" y1="92" x2="168" y2="18" className="pv-handle" />
+    <path d="M26 104 C 78 18, 168 18, 234 92" pathLength={1} className="pv-path" />
+    <circle cx="78" cy="18" r="4" className="pv-ctrl" />
+    <circle cx="168" cy="18" r="4" className="pv-ctrl" />
+    <rect x="21" y="99" width="10" height="10" className="pv-anchor" />
+    <rect x="229" y="87" width="10" height="10" className="pv-anchor" />
+  </svg>
+);
+
+const RING = 2 * Math.PI * 44;
+const PerfVisual = () => (
+  <div className="pv-perf" aria-hidden>
+    <svg viewBox="0 0 110 110" className="pv-ring">
+      <defs>
+        <linearGradient id="pv-ring-grad" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" stopColor="#67e8f9" />
+          <stop offset="1" stopColor="#3b82f6" />
+        </linearGradient>
+      </defs>
+      <circle cx="55" cy="55" r="44" className="pv-ring__track" />
+      <circle
+        cx="55"
+        cy="55"
+        r="44"
+        className="pv-ring__bar"
+        strokeDasharray={RING}
+        strokeDashoffset={RING}
+      />
+    </svg>
+    <span className="pv-score font-display">100</span>
+    <ul className="pv-metrics">
+      <li>
+        <i /> LCP <b>0.8s</b>
+      </li>
+      <li>
+        <i /> CLS <b>0.00</b>
+      </li>
+      <li>
+        <i /> FPS <b>60</b>
+      </li>
+    </ul>
+  </div>
+);
 
 const PRINCIPLES = [
   {
+    visual: CodeVisual,
     title: "Clean Code",
     body: "Readable, typed and reusable — code the next developer thanks you for.",
   },
   {
+    visual: CurveVisual,
     title: "UI / UX Design",
     body: "Designed before it's built. Every state, every edge case, every breakpoint.",
   },
   {
+    visual: PerfVisual,
     title: "Performance",
     body: "Fast is a feature. Lean bundles, 60fps motion, accessible by default.",
   },
@@ -214,12 +287,21 @@ const FallingText = ({ onFall }: { onFall: () => void }) => {
       onClick={() => setStarted(true)}
     >
       <div className="falling__text font-display">
-        {QUOTE.split(" ").map((w, i) => (
-          <span
-            key={i}
-            className={`fw ${HIGHLIGHT.some((h) => w.toLowerCase().includes(h)) ? "fw-hl" : ""}`}
-          >
-            {w}
+        {WORDS.map((w, i) => (
+          <span key={i} className="fw">
+            <span className={HIGHLIGHT.some((h) => w.toLowerCase().includes(h)) ? "fw-hl" : undefined}>
+              {w}
+            </span>
+            {/* The last word wears a design-tool selection box, handles and all. */}
+            {i === WORDS.length - 1 && (
+              <span className="fw-sel" aria-hidden>
+                <i />
+                <i />
+                <i />
+                <i />
+                <b>Text · {w}</b>
+              </span>
+            )}
           </span>
         ))}
       </div>
@@ -229,32 +311,50 @@ const FallingText = ({ onFall }: { onFall: () => void }) => {
 
 const Obsession = () => {
   const root = useRef<HTMLElement>(null);
+  const board = useRef<HTMLDivElement>(null);
   const [round, setRound] = useState(0);
   const [fallen, setFallen] = useState(false);
+  const [size, setSize] = useState({ w: 0, h: 0 });
+
+  // The artboard reports its real dimensions, like a selected frame would.
+  useEffect(() => {
+    const el = board.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) =>
+      setSize({ w: Math.round(e.contentRect.width), h: Math.round(e.contentRect.height) })
+    );
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   useScene(
     () => {
-      // The paper chapter unfolds out of a rounded card as it arrives…
+      gsap.to(".obs-glow", {
+        yPercent: -18,
+        ease: "none",
+        scrollTrigger: { trigger: root.current, start: "top bottom", end: "bottom top", scrub: true },
+      });
+
+      // The frame draws itself in: border traces, then handles pop.
       gsap.fromTo(
-        ".obs-frame",
-        { clipPath: "inset(12% 5% 0% 5% round 64px)" },
+        ".artboard__frame",
+        { clipPath: "inset(0% 100% 100% 0%)" },
         {
-          clipPath: "inset(0% 0% 0% 0% round 0px)",
-          ease: "none",
-          scrollTrigger: { trigger: root.current, start: "top bottom", end: "top 10%", scrub: true },
+          clipPath: "inset(0% 0% 0% 0%)",
+        duration: 1.4,
+          ease: "expo.inOut",
+          scrollTrigger: { trigger: ".artboard", start: "top 80%" },
         }
       );
-      // …and folds back up as it leaves.
-      gsap.fromTo(
-        ".obs-frame",
-        { clipPath: "inset(0% 0% 0% 0% round 0px)" },
-        {
-          clipPath: "inset(0% 5% 10% 5% round 64px)",
-          ease: "none",
-          immediateRender: false,
-          scrollTrigger: { trigger: root.current, start: "bottom 90%", end: "bottom top", scrub: true },
-        }
-      );
+      gsap.from(".artboard__h, .artboard__tag", {
+        scale: 0,
+        opacity: 0,
+        stagger: 0.06,
+        duration: 0.6,
+        delay: 0.9,
+        ease: "back.out(2)",
+        scrollTrigger: { trigger: ".artboard", start: "top 80%" },
+      });
 
       gsap.from(".principle", {
         y: 80,
@@ -265,6 +365,25 @@ const Obsession = () => {
         scrollTrigger: { trigger: ".obs-principles", start: "top 85%" },
       });
 
+      // Lighthouse-style score fills up and counts to 100.
+      const score = { v: 0 };
+      const scoreEl = root.current?.querySelector(".pv-score");
+      gsap
+        .timeline({ scrollTrigger: { trigger: ".pv-perf", start: "top 85%" } })
+        .to(".pv-ring__bar", { strokeDashoffset: 0, duration: 1.8, ease: "power3.out" })
+        .to(
+          score,
+          {
+            v: 100,
+            duration: 1.8,
+            ease: "power3.out",
+            onUpdate: () => {
+              if (scoreEl) scoreEl.textContent = String(Math.round(score.v));
+            },
+          },
+          0
+        );
+
       revealOnScroll(root.current);
     },
     root
@@ -273,24 +392,40 @@ const Obsession = () => {
   return (
     <section id="obsession" ref={root} className="chapter relative">
       <div className="obs-frame">
-        <div className="mx-auto max-w-[1500px] px-pad py-28 md:py-40">
-          <ChapterLabel num="04" title="The Obsession" dark />
-
-          <div className="mt-10 flex flex-wrap items-center gap-3" data-reveal>
-            <span className="pulse-dot bg-accent-deep" />
-            <p className="text-base md:text-lg text-paper-ink/60">
-              Danger ⚠️: Hovering may cause{" "}
-              <span className="font-extrabold text-accent-deep">&quot;Emotional Damage&quot;.</span>
+        <div className="obs-glow" aria-hidden />
+        <div className="relative mx-auto max-w-[1500px] px-pad py-28 md:py-40">
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <ChapterLabel num="04" title="The Obsession" />
+            <p className="obs-warning" data-reveal>
+              <span className="pulse-dot bg-accent" />
+              Hovering may cause <b>&quot;Emotional Damage&quot;</b>
             </p>
-            <span className="pulse-dot bg-accent-blue [animation-delay:.5s]" />
           </div>
 
-          <FallingText key={round} onFall={() => setFallen(true)} />
+          <div ref={board} className={`artboard ${fallen ? "is-fallen" : ""}`}>
+            <div className="artboard__frame" aria-hidden />
+            <span className="artboard__tag artboard__tag--name" aria-hidden>
+              <span className="artboard__hash">#</span> Frame 04 — attention-to-detail
+            </span>
+            <span className="artboard__tag artboard__tag--size" aria-hidden>
+              {size.w} × {size.h}
+            </span>
+            {[0, 1, 2, 3].map((k) => (
+              <span key={k} className="artboard__h" aria-hidden />
+            ))}
 
-          <div className="mt-4 flex flex-col gap-6 md:flex-row md:items-end md:justify-between" data-reveal>
-            <p className="max-w-xl text-lg md:text-xl text-paper-ink/70 leading-relaxed">
-              Every pixel, every interaction, every line of code matters in creating exceptional
-              experiences.
+            <FallingText key={round} onFall={() => setFallen(true)} />
+
+            <span className="artboard__hint" aria-hidden>
+              <span className="artboard__hint-a">↳ Hover the frame to stress-test the layout</span>
+              <span className="artboard__hint-b">↳ Grab a word and throw it</span>
+            </span>
+          </div>
+
+          <div className="mt-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between" data-reveal>
+            <p className="max-w-xl text-lg md:text-xl text-fg/65 leading-relaxed">
+              Every pixel, every interaction, every line of code matters in creating{" "}
+              <span className="font-serif italic text-fg">exceptional</span> experiences.
             </p>
             <button
               className={`obs-reset ${fallen ? "is-visible" : ""}`}
@@ -303,17 +438,31 @@ const Obsession = () => {
             </button>
           </div>
 
-          <div className="obs-principles mt-24 md:mt-36 grid md:grid-cols-3">
+          <div className="mt-28 md:mt-40 flex items-center gap-4" data-reveal>
+            <span className="mono-label text-fg/45">Non-negotiables</span>
+            <span className="h-px flex-1 bg-gradient-to-r from-white/15 to-transparent" />
+          </div>
+
+          <div className="obs-principles mt-8 grid gap-4 md:grid-cols-3">
             {PRINCIPLES.map((p, i) => (
-              <div key={p.title} className="principle group">
+              <div
+                key={p.title}
+                className="principle group"
+                onPointerMove={(e) => {
+                  const r = e.currentTarget.getBoundingClientRect();
+                  e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
+                  e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
+                }}
+              >
                 <span className="principle__fill" aria-hidden />
-                <span className="mono-label relative text-paper-ink/45 group-hover:text-white/70">
-                  0{i + 1}
-                </span>
-                <h3 className="relative mt-16 md:mt-24 font-display text-4xl md:text-5xl tracking-tight">
-                  {p.title}
-                </h3>
-                <p className="relative mt-4 max-w-[32ch] text-paper-ink/65 group-hover:text-white/80">
+                <div className="principle__visual">
+                  <p.visual />
+                </div>
+                <div className="relative mt-8 flex items-baseline justify-between gap-4">
+                  <h3 className="font-display text-3xl lg:text-4xl tracking-tight">{p.title}</h3>
+                  <span className="mono-label text-fg/35">0{i + 1}</span>
+                </div>
+                <p className="relative mt-3 max-w-[34ch] text-fg/55 transition-colors duration-500 group-hover:text-fg/80">
                   {p.body}
                 </p>
               </div>
