@@ -28,7 +28,15 @@ const WorkPanel = ({ p, i }: { p: IProject; i: number }) => {
         >
           <div className="work-media-inner">
             {p.image ? (
-              <img src={p.image} alt={`${p.name} website preview`} loading="lazy" draggable={false} />
+              <img
+                src={p.image}
+                srcSet={`${p.image.replace(/\.webp$/, "-960.webp")} 960w, ${p.image} 1920w`}
+                sizes="(min-width: 768px) 72vw, 84vw"
+                alt={`${p.name} website preview`}
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+              />
             ) : p.visual === "inspection" ? (
               <InspectionVisual />
             ) : (
@@ -84,6 +92,16 @@ const Works = () => {
       const reduce = prefersReducedMotion();
 
       const distance = () => track.scrollWidth - window.innerWidth;
+
+      // The cards sit off-screen inside a clipped, pinned track, so native
+      // lazy-loading would only fetch each screenshot as it slides in. Start
+      // fetching them all once the section is a screen away instead.
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top bottom+=100%",
+        once: true,
+        onEnter: () => q<HTMLImageElement>(".work-media img").forEach((img) => (img.loading = "eager")),
+      });
 
       // Velocity skew — cards lean into the scroll and settle back.
       const skewTo = gsap.quickSetter(q(".work-card"), "skewX", "deg");

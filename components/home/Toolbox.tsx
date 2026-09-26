@@ -136,7 +136,7 @@ const Toolbox = () => {
               {g.items.map((it) => (
                 <li key={it.label} className="tool-pill">
                   {it.icon ? (
-                    <img src={it.icon} alt="" className="h-4 w-4 object-contain" />
+                    <img src={it.icon} alt="" loading="lazy" decoding="async" className="h-4 w-4 object-contain" />
                   ) : (
                     <span className="tool-pill__dot" />
                   )}

@@ -125,7 +125,6 @@ img {
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(8px);
   color: var(--fg);
   font-family: var(--font-mono), monospace;
   font-size: 11.5px;
@@ -208,11 +207,13 @@ img {
 }
 
 /* ───────────────────────── Grain ───────────────────────── */
+// Only needs to overhang the viewport by more than the keyframes shift it
+// (±3%); a 3x-viewport layer cost ~9x the compositor memory.
 .grain {
   position: fixed;
-  inset: -100%;
-  width: 300%;
-  height: 300%;
+  inset: -10%;
+  width: 120%;
+  height: 120%;
   z-index: 95;
   pointer-events: none;
   opacity: 0.05;
@@ -1133,8 +1134,9 @@ html.has-cursor .cursor-dot {
   padding: 7px 12px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(7, 6, 12, 0.55);
-  backdrop-filter: blur(10px);
+  // Solid tint, no backdrop blur: these chips skew and slide over the
+  // screenshots every frame of the Works scroll.
+  background: rgba(7, 6, 12, 0.72);
   color: rgba(244, 241, 255, 0.88);
   font-size: 10.5px;
 }

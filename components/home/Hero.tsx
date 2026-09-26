@@ -110,13 +110,14 @@ const Hero = () => {
           },
           0
         )
-        .to(".hero-out", { y: -70, opacity: 0, filter: "blur(8px)", duration: 0.4, ease: "power1.in" }, 0)
+        // Transform + opacity only: a scrubbed blur() re-rasterises the text every frame.
+        .to(".hero-out", { y: -70, opacity: 0, duration: 0.4, ease: "power1.in" }, 0)
         .to(".hero-out-bottom", { y: 60, opacity: 0, duration: 0.3, ease: "power1.in" }, 0)
         .to(".hero-bg", { scale: 1.3, opacity: 0.15, duration: 1, ease: "none" }, 0)
         .fromTo(
           ".hero-next",
-          { opacity: 0, scale: 0.8, filter: "blur(14px)" },
-          { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.35, ease: "power2.out" },
+          { opacity: 0, scale: 0.8 },
+          { opacity: 1, scale: 1, duration: 0.35, ease: "power2.out" },
           0.42
         );
     },

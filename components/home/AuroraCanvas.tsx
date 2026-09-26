@@ -104,8 +104,9 @@ const AuroraCanvas = () => {
     const uTime = gl.getUniformLocation(prog, "uTime");
     const uMouse = gl.getUniformLocation(prog, "uMouse");
 
-    // Render at reduced resolution — the look is soft anyway.
-    const scale = Math.min(window.devicePixelRatio || 1, 2) * 0.45;
+    // Render at half CSS resolution whatever the pixel ratio — the look is
+    // soft anyway, and on retina screens this is ~3x fewer shaded pixels.
+    const scale = 0.5;
     const resize = () => {
       canvas.width = Math.max(1, Math.floor(canvas.clientWidth * scale));
       canvas.height = Math.max(1, Math.floor(canvas.clientHeight * scale));
@@ -126,13 +127,18 @@ const AuroraCanvas = () => {
     const io = new IntersectionObserver(([entry]) => (visible = entry.isIntersecting));
     io.observe(canvas);
 
+    // The aurora drifts slowly, so 30fps is indistinguishable from 60 and
+    // halves the GPU work, leaving headroom for scrolling and the name.
+    const FRAME = 1000 / 30;
     let raf = 0;
+    let last = 0;
     const t0 = performance.now();
     const loop = (now: number) => {
       raf = requestAnimationFrame(loop);
-      if (!visible || document.hidden) return;
-      mouse.x += (mouse.tx - mouse.x) * 0.04;
-      mouse.y += (mouse.ty - mouse.y) * 0.04;
+      if (!visible || document.hidden || now - last < FRAME - 1) return;
+      last = now;
+      mouse.x += (mouse.tx - mouse.x) * 0.08;
+      mouse.y += (mouse.ty - mouse.y) * 0.08;
       gl.uniform1f(uTime, (now - t0) / 1000);
       gl.uniform2f(uMouse, mouse.x, mouse.y);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
