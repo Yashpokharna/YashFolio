@@ -1,0 +1,19 @@
+# Static images are served with max-age=0 by default, so every repeat visit
+# re-validates each one. Cache them for a day and refresh in the background
+# for a week after that; replacing a file under the same name still shows up
+# within a day. (Netlify's CDN serves these files directly, so headers set in
+# next.config.js never reach them.)
+[[headers]]
+  for = "/projects/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
+
+[[headers]]
+  for = "/skills/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
+
+[[headers]]
+  for = "/social/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
