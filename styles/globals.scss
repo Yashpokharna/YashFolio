@@ -1794,11 +1794,47 @@ html.has-cursor .cursor-dot {
   text-align: center;
   white-space: nowrap;
   color: transparent;
-  background: linear-gradient(180deg, rgba(244, 241, 255, 0.16), rgba(244, 241, 255, 0) 85%);
+  // Three layers clipped to the letters, top first: a glow that follows the
+  // pointer, a cyan → blue band of light that sweeps across now and then,
+  // and the faint base fill. The mask fades all of them out towards the
+  // bottom, which is what gives the wordmark its sinking-into-the-page look.
+  background-image:
+    radial-gradient(
+      380px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(103, 232, 249, var(--glow, 0)),
+      transparent 70%
+    ),
+    linear-gradient(
+      100deg,
+      transparent 35%,
+      rgba(103, 232, 249, 0.95) 45%,
+      rgba(96, 165, 250, 0.95) 52%,
+      transparent 62%
+    ),
+    linear-gradient(rgba(244, 241, 255, 0.16), rgba(244, 241, 255, 0.16));
+  background-size: 100% 100%, 250% 100%, 100% 100%;
+  background-position: 0 0, -10% 0, 0 0;
+  background-repeat: no-repeat;
   -webkit-background-clip: text;
   background-clip: text;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 85%);
+  mask-image: linear-gradient(180deg, #000 0%, transparent 85%);
   user-select: none;
   pointer-events: none;
+  // Only animates while on screen (Contact toggles .is-live).
+  animation: footer-sheen 6.5s cubic-bezier(0.65, 0, 0.35, 1) infinite paused;
+  &.is-live {
+    animation-play-state: running;
+  }
+}
+@keyframes footer-sheen {
+  0% {
+    background-position: 0 0, -10% 0, 0 0;
+  }
+  45%,
+  100% {
+    background-position: 0 0, 110% 0, 0 0;
+  }
 }
 
 /* ───────────────────────── Keyframes ───────────────────────── */
@@ -1894,7 +1930,8 @@ html.has-cursor .cursor-dot {
   .wv *,
   .contact-orb__ring,
   .works-arrow,
-  .hero-scroll__line i {
+  .hero-scroll__line i,
+  .footer-mark {
     animation: none !important;
   }
 }
