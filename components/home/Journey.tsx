@@ -58,7 +58,9 @@ const Journey = () => {
           tl.to(
             cards[j],
             {
-              y: -depth * 22,
+              // Receding cards peek out above the new one; less on phones,
+              // where vertical room is tight.
+              y: () => -depth * (window.innerWidth < 768 ? 12 : 22),
               scale: 1 - depth * 0.055,
               opacity: depth > 2 ? 0 : 1 - depth * 0.3,
             },
@@ -76,7 +78,7 @@ const Journey = () => {
 
   return (
     <section id="journey" ref={root} className="chapter relative">
-      <div className="journey-pin relative flex h-[100svh] flex-col overflow-hidden px-pad pt-24 pb-6 md:pt-28 md:pb-8">
+      <div className="journey-pin relative flex h-[100svh] flex-col overflow-hidden px-pad pt-20 pb-5 md:pt-28 md:pb-8">
         <div className="journey-grid-bg" aria-hidden />
 
         <div className="relative flex items-end justify-between gap-6">
@@ -91,7 +93,7 @@ const Journey = () => {
           </p>
         </div>
 
-        <div className="relative grid min-h-0 flex-1 grid-rows-[auto_1fr] items-center gap-4 py-4 md:grid-cols-[1fr_1.15fr] md:grid-rows-1 md:gap-12">
+        <div className="relative grid min-h-0 flex-1 grid-rows-[auto_1fr] items-center gap-3 py-3 md:grid-cols-[1fr_1.15fr] md:grid-rows-1 md:gap-12 md:py-4">
           <div className="journey-left">
             <div className="journey-year font-display" aria-hidden>
               {columns.map((col, k) =>
@@ -130,18 +132,18 @@ const Journey = () => {
                 <span className="journey-card__num font-display" aria-hidden>
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <div className="flex items-start justify-between gap-4 mono-label text-fg/45">
-                  <span>
+                <div className="flex flex-col gap-1.5 mono-label text-fg/45 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                  <span className="whitespace-nowrap">
                     {m.year} — {String(i + 1).padStart(2, "0")}/{String(N).padStart(2, "0")}
                   </span>
-                  <span className="text-right">{m.place}</span>
+                  <span className="sm:text-right">{m.place}</span>
                 </div>
-                <div className="mt-auto">
+                <div className="mt-5 flex flex-1 flex-col sm:mt-auto sm:block sm:flex-none">
                   <h3 className="font-display journey-card__title">{m.title}</h3>
-                  <p className="mt-4 max-w-[48ch] text-[15px] leading-relaxed text-fg/65 md:text-[17px]">
+                  <p className="mt-3 max-w-[48ch] text-[14px] leading-relaxed text-fg/65 sm:mt-4 sm:text-[15px] md:text-[17px]">
                     {m.body}
                   </p>
-                  <ul className="mt-5 flex flex-wrap gap-2">
+                  <ul className="mt-auto flex flex-wrap gap-2 pt-4 sm:mt-5 sm:pt-0">
                     {m.tags.map((t) => (
                       <li key={t} className="tag">
                         {t}

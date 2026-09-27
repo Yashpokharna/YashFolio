@@ -116,7 +116,7 @@ const Contact = () => {
             <span className="font-serif italic font-normal text-grad">together.</span>
           </SplitReveal>
         </div>
-        <div className="flex lg:justify-end">
+        <div className="flex justify-center lg:justify-end">
           <Magnetic strength={0.4}>
             <a href={`mailto:${EMAIL}`} className="contact-orb" data-cursor="hover">
               <span className="contact-orb__ring" aria-hidden />
@@ -129,17 +129,17 @@ const Contact = () => {
         </div>
       </div>
 
-      <div className="mx-pad mt-16 flex flex-col gap-4 border-y border-white/10 py-8 md:flex-row md:items-center md:justify-between" data-reveal>
+      <div className="mx-pad mt-16 flex flex-col items-center gap-4 border-y border-white/10 py-8 text-center md:flex-row md:justify-between md:text-left" data-reveal>
         <a href={`mailto:${EMAIL}`} className="contact-email font-display link-underline">
           {EMAIL}
         </a>
-        <button onClick={copy} className="pill-btn self-start md:self-auto">
+        <button onClick={copy} className="pill-btn">
           {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
           {copied ? "Copied to clipboard" : "Copy email"}
         </button>
       </div>
 
-      <div className="contact-socials mt-12 flex flex-wrap justify-center gap-4 px-pad">
+      <div className="contact-socials mt-12 grid grid-cols-4 gap-2 px-pad sm:flex sm:flex-wrap sm:justify-center sm:gap-4">
         {SOCIALS.map(({ name, href, Icon, glow }) => (
           <a key={name} href={href} target="_blank" rel="noreferrer" className="social-card group">
             <span className={`social-card__glow bg-gradient-to-br ${glow}`} aria-hidden />
@@ -154,7 +154,7 @@ const Contact = () => {
         ))}
       </div>
 
-      <footer className="relative z-10 mt-16 grid gap-4 px-pad pb-6 pt-10 mono-label text-fg/45 md:mt-24 md:grid-cols-3 md:items-center">
+      <footer className="relative z-10 mt-16 grid justify-items-center gap-3 px-pad pb-6 pt-10 text-center mono-label text-fg/45 md:mt-24 md:grid-cols-3 md:items-center md:justify-items-stretch md:gap-4 md:text-left">
         <span>© {new Date().getFullYear()} Yash Pokharna</span>
         <span className="md:text-center">Handcrafted with passion & precision</span>
         <button onClick={() => scrollToId("home")} className="flex items-center gap-2 uppercase md:justify-self-end hover:text-fg transition-colors">
