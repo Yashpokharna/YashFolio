@@ -1845,7 +1845,8 @@ html.has-cursor .cursor-dot {
   user-select: none;
   pointer-events: none;
   // Only animates while on screen (Contact toggles .is-live).
-  animation: footer-sheen 6.5s cubic-bezier(0.65, 0, 0.35, 1) infinite paused;
+  // A sweep every 3.6s: ~2.2s across the letters, then a short rest.
+  animation: footer-sheen 3.6s cubic-bezier(0.65, 0, 0.35, 1) infinite paused;
   &.is-live {
     animation-play-state: running;
   }
@@ -1854,7 +1855,7 @@ html.has-cursor .cursor-dot {
   0% {
     background-position: 0 0, -10% 0, 0 0;
   }
-  45%,
+  60%,
   100% {
     background-position: 0 0, 110% 0, 0 0;
   }
