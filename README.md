@@ -4,7 +4,7 @@ My personal portfolio, told as a story in six scroll-driven chapters.
 
 ## 🌐 Live Demo
 
-🔗 [Visit Portfolio](https://yashpokharna.in/)
+🔗 [Visit Portfolio](https://yashpokharna.com/)
 
 ---
 
