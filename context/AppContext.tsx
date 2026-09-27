@@ -22,15 +22,13 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [fontsReady, setFontsReady] = useState(false);
 
   useEffect(() => {
-    const fonts = document.fonts;
-    if (!fonts || fonts.status !== "loading") {
-      setFontsReady(true);
-      return;
-    }
-    const fallback = setTimeout(() => setFontsReady(true), 3000);
-    fonts.ready.then(() => {
+    // fonts.ready is already resolved when nothing is loading, so this also
+    // covers cached fonts without setting state synchronously in the effect.
+    const done = () => setFontsReady(true);
+    const fallback = setTimeout(done, 3000);
+    (document.fonts?.ready ?? Promise.resolve()).then(() => {
       clearTimeout(fallback);
-      setFontsReady(true);
+      done();
     });
     return () => clearTimeout(fallback);
   }, []);
