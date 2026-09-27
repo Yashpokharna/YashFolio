@@ -132,7 +132,7 @@ export const PROJECTS: IProject[] = [
     category: "Brand Website",
     meta: "2024 – 25",
     description:
-      "A textile manufacturer's digital storefront — fully responsive, animated with scroll-triggered GSAP and deployed on a custom domain.",
+      "The digital storefront of a bottomwear manufacturer in Bhilwara — fully responsive, animated with scroll-triggered GSAP and deployed on a custom domain.",
     gradient: ["#3a0000", "#b91c1c"],
     tech: ["Next.js", "React", "GSAP", "Tailwind"],
     image: "/projects/TwinsApparels.webp",
