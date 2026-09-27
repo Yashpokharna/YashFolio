@@ -28,6 +28,8 @@ const WorkPanel = ({ p, i }: { p: IProject; i: number }) => {
         >
           <div className="work-media-inner">
             {p.image ? (
+              // Plain <img>: the screenshots are pre-sized WebP with their own srcset.
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={p.image}
                 srcSet={`${p.image.replace(/\.webp$/, "-960.webp")} 960w, ${p.image} 1920w`}

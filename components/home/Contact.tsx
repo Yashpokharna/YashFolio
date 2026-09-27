@@ -64,26 +64,25 @@ const Contact = () => {
         toggleClass: "is-live",
       });
 
-      // A soft light follows the pointer across the wordmark while it's near.
-      const section = root.current!;
-      const mark = markRef.current;
-      let onMove = (_e: PointerEvent) => {};
-      if (mark && !isTouch()) {
-        gsap.set(mark, { "--glow": 0 });
-        const glow = gsap.quickTo(mark, "--glow", { duration: 0.6, ease: "power2.out" });
-        onMove = (e: PointerEvent) => {
-          const r = mark.getBoundingClientRect();
-          const near = e.clientY > r.top - 160 && e.clientY < r.bottom + 60;
-          if (near) {
-            mark.style.setProperty("--mx", `${e.clientX - r.left}px`);
-            mark.style.setProperty("--my", `${e.clientY - r.top}px`);
-          }
-          glow(near ? 0.6 : 0);
-        };
-        section.addEventListener("pointermove", onMove);
-      }
+      revealOnScroll(root.current);
 
-      revealOnScroll(section);
+      // A soft light follows the pointer across the wordmark while it's near.
+      const section = root.current;
+      const mark = markRef.current;
+      if (!section || !mark || isTouch()) return;
+
+      gsap.set(mark, { "--glow": 0 });
+      const glow = gsap.quickTo(mark, "--glow", { duration: 0.6, ease: "power2.out" });
+      const onMove = (e: PointerEvent) => {
+        const r = mark.getBoundingClientRect();
+        const near = e.clientY > r.top - 160 && e.clientY < r.bottom + 60;
+        if (near) {
+          mark.style.setProperty("--mx", `${e.clientX - r.left}px`);
+          mark.style.setProperty("--my", `${e.clientY - r.top}px`);
+        }
+        glow(near ? 0.6 : 0);
+      };
+      section.addEventListener("pointermove", onMove);
       return () => section.removeEventListener("pointermove", onMove);
     },
     root

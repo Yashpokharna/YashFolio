@@ -136,6 +136,8 @@ const Toolbox = () => {
               {g.items.map((it) => (
                 <li key={it.label} className="tool-pill">
                   {it.icon ? (
+                    // 16px SVG icons: nothing for next/image to optimise.
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img src={it.icon} alt="" loading="lazy" decoding="async" className="h-4 w-4 object-contain" />
                   ) : (
                     <span className="tool-pill__dot" />
