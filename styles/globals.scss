@@ -283,88 +283,61 @@ img {
   color: transparent;
 }
 /* ───────────────────────── Cursor ───────────────────────── */
-.cursor-ring,
-.cursor-dot {
+// Liquid blob cursor (components/common/Cursor.tsx). The blob is drawn at
+// 104px and scaled by JS, so size, stretch and squash are all transforms.
+.cursor {
   display: none;
   position: fixed;
   top: 0;
   left: 0;
-  width: 0;
-  height: 0;
   z-index: 9999;
   pointer-events: none;
   opacity: 0;
+  visibility: hidden;
+  mix-blend-mode: difference;
+  will-change: transform;
 }
-html.has-cursor .cursor-ring,
-html.has-cursor .cursor-dot {
+html.has-cursor .cursor {
   display: block;
 }
-.cursor-dot {
-  mix-blend-mode: difference;
-  &::before {
-    content: "";
-    position: absolute;
-    left: -3px;
-    top: -3px;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #fff;
-    transition: transform 0.3s var(--ease-out);
-  }
-  &.is-hidden::before {
-    transform: scale(0);
-  }
+.cursor__blob {
+  position: absolute;
+  left: -52px;
+  top: -52px;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: #fff;
+  will-change: transform;
+  transition: background 0.35s, box-shadow 0.35s;
 }
-.cursor-ring {
-  mix-blend-mode: difference;
-  &__inner {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.55);
-    transform: translate(-50%, -50%);
-    transition: width 0.5s var(--ease-out), height 0.5s var(--ease-out),
-      background-color 0.35s, border-color 0.35s, box-shadow 0.35s;
-  }
-  &.is-hover .cursor-ring__inner {
-    width: 72px;
-    height: 72px;
-    background: #fff;
-    border-color: transparent;
-  }
-  &.is-view {
-    mix-blend-mode: normal;
-    .cursor-ring__inner {
-      width: 104px;
-      height: 104px;
-      background: var(--grad);
-      border-color: transparent;
-      box-shadow: 0 12px 40px rgba(59, 130, 246, 0.4);
-    }
-    .cursor-label {
-      opacity: 1;
-      transform: none;
-    }
-  }
-}
-.cursor-label {
+.cursor__label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  color: var(--ink);
   font-family: var(--font-mono), monospace;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #0b0712;
-  white-space: nowrap;
   opacity: 0;
-  transform: scale(0.5);
-  transition: opacity 0.3s, transform 0.4s var(--ease-out);
+  transform: translate(-50%, -50%) scale(0.5);
+  transition: opacity 0.3s, transform 0.45s var(--ease-out);
+}
+// Project cards: the blob turns into a gradient "Visit" bubble. Difference
+// blending would muddy the gradient, so it's switched off here.
+.cursor.is-view {
+  mix-blend-mode: normal;
+  .cursor__blob {
+    background: var(--grad);
+    box-shadow: 0 12px 40px rgba(59, 130, 246, 0.4);
+  }
+  .cursor__label {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
 }
 
 /* ───────────────────────── Header & menu ───────────────────────── */
